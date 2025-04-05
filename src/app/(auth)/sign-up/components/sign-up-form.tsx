@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 const formSchema = z.object({
     email: z
