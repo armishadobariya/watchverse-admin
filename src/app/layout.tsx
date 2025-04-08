@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import varela_Round from "@/fonts/varela-round";
+import Provider from "@/lib/provider";
+import { Toaster } from "@/components/ui/sonner"
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +20,13 @@ export default function RootLayout({
       <body
         className={`${varela_Round.variable} antialiased`}
       >
-        {children}
+        <main>
+          <Provider>
+            {children}
+          </Provider>
+        </main>
+        <Toaster />
+
       </body>
     </html>
   );

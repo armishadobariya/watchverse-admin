@@ -15,6 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { loginAdmin } from "@/lib/api/auth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     email: z
@@ -25,6 +29,7 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+    const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -32,8 +37,18 @@ export function LoginForm() {
         },
     });
 
+    const { mutate, isPending } = useMutation({
+        mutationFn: loginAdmin,
+        onSuccess: (payload) => {
+            toast.success(payload.message)
+            router.push('/')
+        },
+        onError: (error) => {
+            toast.error(error.message)
+        }
+    })
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        mutate(values);
     }
 
     return (
@@ -76,8 +91,9 @@ export function LoginForm() {
                         <Button
                             type="submit"
                             className="w-full h-11 text-base uppercase font-semibold"
+                            disabled={isPending}
                         >
-                            Log In
+                            {isPending ? "Logging in..." : "Log In"}
                         </Button>
                     </form>
                     <Link href="" className="text-bronze text-sm">
