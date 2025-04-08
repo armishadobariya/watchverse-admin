@@ -1,5 +1,4 @@
 
-import axios from "axios";
 import axiosInstance from "../axiosIntance";
 import { LoginPayload, RegisterPayload } from "@/type/auth";
 import { API_ENDPOINTS } from "@/utils/constants";

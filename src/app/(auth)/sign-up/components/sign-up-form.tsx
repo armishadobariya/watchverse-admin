@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,26 +32,8 @@ const formSchema = z.object({
 
 type RegisterFormData = z.infer<typeof formSchema>;
 
-// Define the response type for the register API
-interface ApiResponse<T> {
-    data: T;
-    message?: string;
-    success: boolean;
-}
-
-interface RegisterResponse {
-    token: string;
-    refreshToken: string;
-    user: {
-        id: string;
-        email: string;
-        username: string;
-    };
-}
-
 export function SignUpForm() {
     const router = useRouter();
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const form = useForm<RegisterFormData>({
         resolver: zodResolver(formSchema),
@@ -66,6 +47,7 @@ export function SignUpForm() {
     const { mutate, isPending } = useMutation({
         mutationFn: registerAdmin,
         onSuccess: (payload) => {
+            console.log(payload);
             // toast.success(payload?.message);
             toast.success("Registration successful");
             router.push("/login");
@@ -82,10 +64,6 @@ export function SignUpForm() {
     return (
         <div className="space-y-10">
             <h2 className="text-3xl font-bold uppercase text-slate-950">Sign up</h2>
-
-            {errorMessage && (
-                <div className="text-red-500">{errorMessage}</div>
-            )}
 
             <Form {...form}>
                 <div className="flex flex-col gap-2">
