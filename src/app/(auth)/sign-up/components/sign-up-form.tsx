@@ -3,6 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +18,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { registerAdmin } from "@/lib/api/auth";
+import { toast } from "sonner";
+
 
 const formSchema = z.object({
     email: z
@@ -25,8 +31,30 @@ const formSchema = z.object({
     password: z.string().min(1, { message: "This field has to be filled." }),
 });
 
+type RegisterFormData = z.infer<typeof formSchema>;
+
+// Define the response type for the register API
+interface ApiResponse<T> {
+    data: T;
+    message?: string;
+    success: boolean;
+}
+
+interface RegisterResponse {
+    token: string;
+    refreshToken: string;
+    user: {
+        id: string;
+        email: string;
+        username: string;
+    };
+}
+
 export function SignUpForm() {
-    const form = useForm<z.infer<typeof formSchema>>({
+    const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const form = useForm<RegisterFormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
@@ -35,14 +63,30 @@ export function SignUpForm() {
         },
     });
 
+    const { mutate, isPending } = useMutation({
+        mutationFn: registerAdmin,
+        onSuccess: (payload) => {
+            // toast.success(payload?.message);
+            toast.success("Registration successful");
+            router.push("/login");
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
+    });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        mutate(values);
     }
 
     return (
         <div className="space-y-10">
             <h2 className="text-3xl font-bold uppercase text-slate-950">Sign up</h2>
+
+            {errorMessage && (
+                <div className="text-red-500">{errorMessage}</div>
+            )}
+
             <Form {...form}>
                 <div className="flex flex-col gap-2">
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -55,7 +99,6 @@ export function SignUpForm() {
                                     <FormControl>
                                         <Input placeholder="Enter your email" {...field} />
                                     </FormControl>
-
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -69,7 +112,6 @@ export function SignUpForm() {
                                     <FormControl>
                                         <Input placeholder="Enter your Username" {...field} />
                                     </FormControl>
-
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -94,8 +136,9 @@ export function SignUpForm() {
                         <Button
                             type="submit"
                             className="w-full h-11 text-base uppercase font-semibold"
+                            disabled={isPending}
                         >
-                            Register
+                            {isPending ? "Registering..." : "Register"}
                         </Button>
                     </form>
                     <div className="text-sm">
