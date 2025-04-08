@@ -9,5 +9,5 @@ export const API_ENDPOINTS = {
 export enum Paths {
     Dashboard = "/",
     Login = "/login",
-    Register = "/register",
+    Register = "/sign-up",
 }
