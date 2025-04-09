@@ -71,34 +71,46 @@ export function LoginForm() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Enter your Password"
-                                            type="password"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button
-                            type="submit"
-                            className="w-full h-11 text-base uppercase font-semibold"
-                            disabled={isPending}
-                        >
-                            {isPending ? "Logging in..." : "Log In"}
-                        </Button>
+
+                        <div>
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Enter your Password"
+                                                type="password"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Link href="" className="text-bronze text-sm">
+                                forgot password?
+                            </Link>
+                        </div>
+                        <div className="space-y-1.5">
+                            <Button
+                                type="submit"
+                                className="w-full h-11 text-base uppercase font-semibold"
+                                disabled={isPending}
+                            >
+                                {isPending ? "Logging in..." : "Log In"}
+                            </Button>
+                            <span className="text-sm">
+                                Do not have an Account?
+                                <Link href="/sign-up" className="text-bronze ">
+                                    sign up
+                                </Link>
+                            </span>
+                        </div>
                     </form>
-                    <Link href="" className="text-bronze text-sm">
-                        forgot password?
-                    </Link>
+
                 </div>
             </Form>
         </div>

@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { Paths } from "./utils/constants";
 
 // Define public paths that don't require authentication
-const publicPath = [Paths.Login, Paths.Register];
-
+const publicPath = [
+    Paths.Login,
+    Paths.Register,
+    Paths.ForgotPassword,
+    Paths.ResetPassword,
+];
 export async function middleware(req: NextRequest): Promise<NextResponse> {
     // Retrieve the token from cookies
     const token = req?.cookies?.get("AUTH_TOKEN")?.value;
