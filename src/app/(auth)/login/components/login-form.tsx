@@ -90,7 +90,7 @@ export function LoginForm() {
                                     </FormItem>
                                 )}
                             />
-                            <Link href="" className="text-bronze text-sm">
+                            <Link href="/forgot-password" className="text-bronze text-sm">
                                 forgot password?
                             </Link>
                         </div>
