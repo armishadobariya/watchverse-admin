@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import React from "react";
 import { AppSidebar } from "./app-sidebar";
 import Provider from "@/lib/provider";
-// import Header from "./header";
+import Header from "./header";
 import { usePathname } from "next/navigation";
 
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
@@ -29,7 +29,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
             <main className="w-full">
                 <SidebarTrigger />
                 <Provider>
-                    {/* <Header /> */}
+                    <Header />
                     {children}
                 </Provider>
             </main>
