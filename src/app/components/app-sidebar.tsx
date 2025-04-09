@@ -8,7 +8,6 @@ import {
     Users,
     BadgeIndianRupee,
     CircleUserRound,
-    LogOut,
 } from "lucide-react";
 
 import {
@@ -25,7 +24,7 @@ import {
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-// import { LogOut } from "./log-out";
+import { LogOut } from "./log-out";
 
 // Menu items.
 const items = [
@@ -105,9 +104,9 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton className="p-0">
+                            {/* <LogOut />
+                            <span>Logout</span> */}
                             <LogOut />
-                            <span>Logout</span>
-                            {/* <LogOut /> */}
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
