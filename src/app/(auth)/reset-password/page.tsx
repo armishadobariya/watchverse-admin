@@ -5,7 +5,7 @@ import ResetPasswordForm from "./components/reset-password-form";
 
 const LoginPage = () => {
     return (
-        <Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
             <main className="flex h-screen items-center justify-center">
                 <div className="grid md:grid-cols-2 gap-10 items-center bg-gray-100 max-w-4xl rounded-3xl w-full p-6 mx-6">
                     <WatchVerseLogo />
