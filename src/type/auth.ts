@@ -9,3 +9,7 @@ export interface RegisterPayload extends LoginPayload {
 export interface ForgotPasswordPayload {
     email: string;
 }
+
+export interface ResetPasswordPayload {
+    newPassword: string;
+}
