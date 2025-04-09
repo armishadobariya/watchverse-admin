@@ -6,4 +6,10 @@ export interface RegisterPayload extends LoginPayload {
     username: string;
 }
 
+export interface ForgotPasswordPayload {
+    email: string;
+}
 
+export interface ResetPasswordPayload {
+    newPassword: string;
+}
