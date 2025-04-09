@@ -10,7 +10,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const pathnames = [
         "/login",
-        "/register",
+        "/sign-up",
         "/forgot-password",
         "/reset-password",
     ];
