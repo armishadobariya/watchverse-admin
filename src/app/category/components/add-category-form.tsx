@@ -72,7 +72,7 @@ export function AddCategoryForm() {
                         <div className="space-y-1.5">
                             <Button
                                 type="submit"
-                                className="w-full h-11 text-base uppercase font-semibold"
+                                className="w-full h-11 text-base text-bronze uppercase font-semibold"
                             >
                                 Create
                             </Button>
