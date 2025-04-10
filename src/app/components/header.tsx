@@ -19,7 +19,7 @@ const Header = () => {
         queryFn: getProfile,
     });
     return (
-        <header className="!w-full shadow-sm">
+        <header className="!w-full shadow-sm sticky top-0 z-50 bg-white">
             <div className="flex items-center justify-between w-full py-6 px-5">
                 {pathname === "/" ? (
                     <h1 className="ml-3 text-lg font-semibold text-slate-900">

@@ -3,6 +3,7 @@
 
 @theme {
   --color-bronze: #c3853a;
+  --color-bronze-foreground: rgb(245 238 228);
 }
 
 @custom-variant dark (&:is(.dark *));

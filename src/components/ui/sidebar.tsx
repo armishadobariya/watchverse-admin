@@ -27,7 +27,7 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "16rem";
+const SIDEBAR_WIDTH = "17rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "4rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
@@ -405,7 +405,7 @@ function SidebarGroupLabel({
       data-slot="sidebar-group-label"
       data-sidebar="group-label"
       className={cn(
-        "text-bronze ring-sidebar-ring flex shrink-0 items-center rounded-md px-2 text-2xl font-bold outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "text-bronze ring-sidebar-ring flex shrink-0 items-center rounded-md px-2 text-3xl font-bold outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
         className
       )}
@@ -474,12 +474,12 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center overflow-hidden rounded-md px-2 py-3 text-left text-base text-slate-900 outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-[#f5eee4] hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-[#f5eee4] active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-[#f5eee4] data-[active=true]:font-medium data-[active=true]:text-bronze data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-12!  [&>span:last-child]:truncate [&>svg]:size-6! [&>svg]:shrink-0 font-medium",
+  "peer/menu-button flex w-full items-center overflow-hidden rounded-md px-2 py-3 text-left text-base text-slate-900 outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-bronze-foreground hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-bronze-foreground active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-bronze-foreground data-[active=true]:font-medium data-[active=true]:text-bronze data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-12!  [&>span:last-child]:truncate [&>svg]:size-6! [&>svg]:shrink-0 font-medium",
   {
     variants: {
       variant: {
         default:
-          "hover:bg-[#f5eee4] hover:text-bronze transition-colors duration-300 ease-in-out ",
+          "hover:bg-bronze-foreground hover:text-bronze transition-colors duration-300 ease-in-out ",
         outline:
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-[#e2cbae]  ",
       },
