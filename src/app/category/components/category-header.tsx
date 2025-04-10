@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { FolderDown, Plus } from "lucide-react";
 import React from "react";
+import AddCategoryDialog from "./add-category-dialog";
 // import AddCategory from "./add-category";
 
 const CategoryHeader = () => {
@@ -15,7 +16,7 @@ const CategoryHeader = () => {
                     <span>(20)</span> categories
                 </p>
             </div>
-            {/* <AddCategory /> */}
+            <AddCategoryDialog />
         </div>
     );
 };
