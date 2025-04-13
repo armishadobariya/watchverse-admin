@@ -6,6 +6,8 @@ export const API_ENDPOINTS = {
     CHNAGE_PASSWORD: "/change-password",
     FORGOT_PASSWORD: "/forgot-password",
     RESET_PASSWORD: "/reset-password",
+
+    ADD_CATEGORY: "/admin/category"
 };
 
 export enum Paths {

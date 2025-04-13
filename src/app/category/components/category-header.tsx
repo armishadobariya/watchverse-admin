@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { FolderDown, Plus } from "lucide-react";
+import { FolderDown } from "lucide-react";
 import React from "react";
 import AddCategoryDialog from "./add-category-dialog";
 // import AddCategory from "./add-category";

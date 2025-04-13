@@ -50,7 +50,7 @@ export function DataTable<TData, TValue>({
 
     function getPageRange(currentPage: number, totalPages: number) {
         let start = Math.max(0, currentPage - 1);
-        let end = Math.min(totalPages, start + 3);
+        const end = Math.min(totalPages, start + 3);
 
         // Adjust start if we're at the end
         if (end - start < 3 && start > 0) {
@@ -206,8 +206,8 @@ export function DataTable<TData, TValue>({
                                     key={page}
                                     onClick={() => table.setPageIndex(page)}
                                     className={`px-3 py-1 border rounded-md ${page === table.getState().pagination.pageIndex
-                                            ? "border-bronze font-medium text-bronze"
-                                            : "border-gray-300"
+                                        ? "border-bronze font-medium text-bronze"
+                                        : "border-gray-300"
                                         }`}
                                 >
                                     {page + 1}
