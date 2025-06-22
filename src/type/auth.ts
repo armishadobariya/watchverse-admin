@@ -1,15 +1,15 @@
 export interface LoginPayload {
-    email: string;
-    password: string;
+  email: string
+  password: string
 }
 export interface RegisterPayload extends LoginPayload {
-    username: string;
+  username: string
 }
 
 export interface ForgotPasswordPayload {
-    email: string;
+  email: string
 }
 
 export interface ResetPasswordPayload {
-    newPassword: string;
+  newPassword: string
 }
