@@ -1,8 +1,8 @@
+import LayoutWrapper from "@/components/layout/layout-wrapper"
 import varela_Round from "@/fonts/varela-round"
 import type { Metadata } from "next"
 import { Toaster } from "sonner"
 
-import LayoutWrapper from "./components/layout-wrapper"
 import "./globals.css"
 
 export const metadata: Metadata = {

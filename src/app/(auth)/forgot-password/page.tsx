@@ -1,7 +1,6 @@
+import ForgotPasswordForm from "@/components/auth/forgot-password-form"
+import WatchVerseLogo from "@/components/auth/watchverse-logo"
 import React from "react"
-
-import WatchVerseLogo from "../login/components/watchverse-logo"
-import ForgotPasswordForm from "./components/forgot-password-form"
 
 const LoginPage = () => {
   return (

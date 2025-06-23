@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React from "react"
 
-import AccountDetails from "./account-details"
-import ChangePassword from "./change-password"
+import AccountDetails from "./partials/account-details"
+import ChangePassword from "./partials/change-password"
 
 const Profile = () => {
   return (

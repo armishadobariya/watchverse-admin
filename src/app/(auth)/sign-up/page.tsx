@@ -1,7 +1,6 @@
+import { SignUpForm } from "@/components/auth/sign-up-form"
+import WatchVerseLogo from "@/components/auth/watchverse-logo"
 import React from "react"
-
-import WatchVerseLogo from "../login/components/watchverse-logo"
-import { SignUpForm } from "./components/sign-up-form"
 
 const SignUpPage = () => {
   return (

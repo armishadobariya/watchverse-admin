@@ -25,7 +25,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-import { LogOut } from "./log-out"
+import { LogOut } from "../auth/log-out"
 
 // Menu items.
 const items = [

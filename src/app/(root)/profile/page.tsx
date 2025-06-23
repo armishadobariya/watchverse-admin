@@ -1,6 +1,5 @@
+import Profile from "@/components/profile/profile"
 import React, { Suspense } from "react"
-
-import Profile from "./components/profile"
 
 const ProfilePage = () => {
   return (

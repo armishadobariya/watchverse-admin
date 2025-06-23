@@ -1,7 +1,6 @@
+import { LoginForm } from "@/components/auth/login-form"
+import WatchVerseLogo from "@/components/auth/watchverse-logo"
 import React from "react"
-
-import { LoginForm } from "./components/login-form"
-import WatchVerseLogo from "./components/watchverse-logo"
 
 const LoginPage = () => {
   return (

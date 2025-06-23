@@ -1,7 +1,6 @@
+import ResetPasswordForm from "@/components/auth/reset-password-form"
+import WatchVerseLogo from "@/components/auth/watchverse-logo"
 import React, { Suspense } from "react"
-
-import WatchVerseLogo from "../login/components/watchverse-logo"
-import ResetPasswordForm from "./components/reset-password-form"
 
 const LoginPage = () => {
   return (

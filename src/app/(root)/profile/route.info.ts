@@ -1,4 +1,4 @@
-import createRoute, { EmptyRouteParams } from "../../../route.config"
+import createRoute, { EmptyRouteParams } from "../../../../route.config"
 
 const ProfilePageRoute = createRoute({
   name: "/profile",
