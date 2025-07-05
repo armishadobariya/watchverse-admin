@@ -1,10 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@theme {
-  --color-bronze: #c3853a;
-}
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -114,12 +110,28 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@theme {
+  --color-teal: #00bba7;
+  --color-teal-20: #f0fdfa;
+
+  --color-main: #09090b;
+  --color-sub: #9f9fa9;
+}
+
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #fff inset !important;
+    -webkit-text-fill-color: #000 !important;
   }
 }

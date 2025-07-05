@@ -1,5 +1,7 @@
 "use client"
 
+import DashboardPageRoute from "@/app/(root)/dashboard/route.info"
+import ProfilePageRoute from "@/app/(root)/profile/route.info"
 import {
   Sidebar,
   SidebarContent,
@@ -21,9 +23,9 @@ import {
   Tag,
   Users,
 } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Logo from "static/icons/logo.svg"
 
 import { LogOut } from "../auth/log-out"
 
@@ -31,12 +33,12 @@ import { LogOut } from "../auth/log-out"
 const items = [
   {
     title: "Dashboard",
-    url: "/",
+    url: DashboardPageRoute.navigate(),
     icon: LayoutDashboard,
   },
   {
     title: "Product",
-    url: "/products",
+    url: "#",
     icon: BaggageClaim,
   },
   {
@@ -66,7 +68,7 @@ const items = [
   },
   {
     title: "Profile",
-    url: "/profile",
+    url: ProfilePageRoute.navigate(),
     icon: CircleUserRound,
   },
 ]
@@ -77,14 +79,14 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <div className="flex items-center py-4">
-            <Image src="/icons/logo.svg" width={40} height={40} alt="logo" />
+          <div className="flex items-center px-1 py-2 bg-accent rounded-lg shrink-0 ">
+            <Logo className="size-10 flex-shrink-0" />
             <SidebarGroupLabel>WatchVerse</SidebarGroupLabel>
           </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+              {items?.map((item) => (
+                <SidebarMenuItem key={item?.title}>
                   <SidebarMenuButton
                     asChild
                     className="flex gap-3.5"

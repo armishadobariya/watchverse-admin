@@ -119,7 +119,7 @@ export function SignUpForm() {
           </form>
           <div className="text-sm">
             <span className="text-slate-950">Already have an account?</span>{" "}
-            <span className="text-bronze">
+            <span className="text-teal">
               <Link href="/login">Log In</Link>
             </span>
           </div>

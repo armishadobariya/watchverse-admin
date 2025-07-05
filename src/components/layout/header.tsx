@@ -32,7 +32,7 @@ const Header = () => {
           </h1>
         )}
         <div className="flex items-center gap-2">
-          <CircleUserRound className="bg-bronze !size-9 rounded-full p-1 text-white" />
+          <CircleUserRound className="bg-teal !size-9 rounded-full p-1 text-white" />
           <span className="font-semibold text-slate-900">
             {profile.data?.username}
           </span>

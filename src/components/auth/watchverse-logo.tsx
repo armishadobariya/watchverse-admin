@@ -8,7 +8,7 @@ const WatchVerseLogo = () => {
         {/* <Logo width={100} height={100} className="mx-auto" /> */}
         <Image src={"/icons/logo.svg"} width={170} height={170} alt="logo" />
       </div>
-      <div className="text-bronze justify-center text-4xl font-bold">
+      <div className="text-teal justify-center text-4xl font-bold">
         WatchVerse
       </div>
     </div>

@@ -76,7 +76,7 @@ const ResetPasswordForm = () => {
       <div className="space-y-7">
         <div className="flex items-center gap-2">
           <Image src={"/icons/logo.svg"} width={60} height={60} alt="logo" />
-          <h1 className="text-bronze text-3xl font-bold">WatchVerse</h1>
+          <h1 className="text-teal text-3xl font-bold">WatchVerse</h1>
         </div>
         <div className="space-y-1.5">
           <h2 className="text-2xl font-bold text-slate-800">

@@ -27,7 +27,7 @@ export const LogOut = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <div className="mx-auto flex flex-col items-center justify-center gap-3.5">
-          <OctagonAlert className="text-bronze size-20" />
+          <OctagonAlert className="text-teal size-20" />
           <div className="space-y-2 text-center">
             <h1 className="text-2xl font-semibold text-slate-800">
               Confirm Logout
