@@ -1,20 +1,11 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { resetPassword } from "@/lib/api/auth"
+import { resetPasswordHandler } from "@/lib/api/auth"
 import { ResetPasswordPayload } from "@/type/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
-import Image from "next/image"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -50,7 +41,11 @@ const ResetPasswordForm = () => {
   const searchParams = useSearchParams()
   const id = (params.id as string) || searchParams.get("id")
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       newPassword: "",
@@ -58,7 +53,8 @@ const ResetPasswordForm = () => {
   })
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (payload: ResetPasswordPayload) => resetPassword(id, payload),
+    mutationFn: (payload: ResetPasswordPayload) =>
+      resetPasswordHandler(id, payload),
     onSuccess: (payload) => {
       toast.success(payload?.message)
       router.push("/login")
@@ -74,10 +70,6 @@ const ResetPasswordForm = () => {
   return (
     <div className="flex flex-col space-y-11">
       <div className="space-y-7">
-        <div className="flex items-center gap-2">
-          <Image src={"/icons/logo.svg"} width={60} height={60} alt="logo" />
-          <h1 className="text-teal text-3xl font-bold">WatchVerse</h1>
-        </div>
         <div className="space-y-1.5">
           <h2 className="text-2xl font-bold text-slate-800">
             Reset your Password
@@ -85,53 +77,32 @@ const ResetPasswordForm = () => {
         </div>
       </div>
 
-      <Form {...form}>
-        <div className="flex flex-col gap-2">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="newPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>New Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter New Password"
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Re-Enter your password"
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="h-11 w-full text-base font-semibold uppercase"
-              disabled={isPending}
-            >
-              Reset
-            </Button>
-          </form>
-        </div>
-      </Form>
+      <div className="flex flex-col gap-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <Input
+            type="password"
+            label="New Password *"
+            placeholder="Enter New Password"
+            {...register("newPassword")}
+            error={errors?.newPassword}
+          />
+          <Input
+            type="password"
+            label="Confirm Password *"
+            placeholder="Re-Enter your password"
+            {...register("confirmPassword")}
+            error={errors?.confirmPassword}
+          />
+          <Button
+            type="submit"
+            className="h-11 w-full text-base font-semibold uppercase"
+            disabled={isPending}
+            loader={isPending}
+          >
+            Reset
+          </Button>
+        </form>
+      </div>
     </div>
   )
 }

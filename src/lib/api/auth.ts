@@ -4,57 +4,86 @@ import {
   RegisterPayload,
   ResetPasswordPayload,
 } from "@/type/auth"
-import { API_ENDPOINTS } from "@/utils/constants"
+import { ApiEndPoint } from "@/utils/constants"
+import { toast } from "sonner"
+
+// import { API_ENDPOINTS } from "@/utils/constants"
 
 import axiosInstance from "../axiosIntance"
+import { errorHandler } from "../utils"
 
 // admin registration handler
-export const registerAdmin = async (payload: RegisterPayload) => {
-  const response = await axiosInstance.post(
-    `${process.env.NEXT_PUBLIC_BASE_URL}${API_ENDPOINTS.REGISTER}`,
-    payload,
-  )
-  // if (response.data.statusCode !== 200) {
-  //   throw new Error(response.data.message);
-  // }
-  return response.data
+export const registerAdminHandler = async (payload: RegisterPayload) => {
+  try {
+    const response = await axiosInstance.post(
+      `${ApiEndPoint.REGISTER}`,
+      payload,
+    )
+    if (response.data.statusCode !== 200) {
+      toast.error(response.data.message)
+      throw new Error(response.data.message)
+    } else {
+      toast.success(response.data.message)
+    }
+    return response.data
+  } catch (error) {
+    errorHandler(error)
+  }
 }
 
 // admin login handler
-export const loginAdmin = async (payload: LoginPayload) => {
-  const response = await axiosInstance.post(
-    `${process.env.NEXT_PUBLIC_BASE_URL}${API_ENDPOINTS.LOGIN}`,
-    payload,
-  )
-  if (response.data.statusCode !== 200) {
-    throw new Error(response.data.message)
+export const loginAdminHandler = async (payload: LoginPayload) => {
+  try {
+    const response = await axiosInstance.post(ApiEndPoint.LOGIN, payload)
+    if (response.data.statusCode !== 200) {
+      toast.error(response.data.message)
+      throw new Error(response.data.message)
+    } else {
+      toast.success(response.data.message)
+    }
+    return response.data
+  } catch (error) {
+    errorHandler(error)
   }
-  return response.data
 }
 
 // forgot password handler
-export const forgotPassword = async (payload: ForgotPasswordPayload) => {
-  const response = await axiosInstance.post(
-    `${process.env.NEXT_PUBLIC_BASE_URL}${API_ENDPOINTS.FORGOT_PASSWORD}`,
-    payload,
-  )
-  if (response.data.statusCode !== 200) {
-    throw new Error(response.data.message)
+export const forgotPasswordHandler = async (payload: ForgotPasswordPayload) => {
+  try {
+    const response = await axiosInstance.post(
+      `${ApiEndPoint.FORGOT_PASSWORD}`,
+      payload,
+    )
+    if (response.data.statusCode !== 200) {
+      toast.error(response.data.message)
+      throw new Error(response.data.message)
+    } else {
+      toast.success(response.data.message)
+    }
+    return response.data
+  } catch (error) {
+    errorHandler(error)
   }
-  return response.data
 }
 
 // reset password handler
-export const resetPassword = async (
+export const resetPasswordHandler = async (
   id: string | null,
   payload: ResetPasswordPayload,
 ) => {
-  const response = await axiosInstance.post(
-    `${process.env.NEXT_PUBLIC_BASE_URL}${API_ENDPOINTS.RESET_PASSWORD}?id=${id}`,
-    payload,
-  )
-  if (response.data.statusCode !== 200) {
-    throw new Error(response.data.message)
+  try {
+    const response = await axiosInstance.post(
+      `${ApiEndPoint.RESET_PASSWORD}?id=${id}`,
+      payload,
+    )
+    if (response.data.statusCode !== 200) {
+      toast.error(response.data.message)
+      throw new Error(response.data.message)
+    } else {
+      toast.success(response.data.message)
+    }
+    return response.data
+  } catch (error) {
+    errorHandler(error)
   }
-  return response.data
 }

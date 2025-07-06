@@ -19,7 +19,20 @@ export default function DashboardLayout({
     <html lang="en">
       <body className={`${varela_Round.variable}, antialiased`}>
         <LayoutWrapper>{children}</LayoutWrapper>
-        <Toaster />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            unstyled: true,
+            classNames: {
+              error:
+                "bg-red-50 w-full flex !item-center gap-2 text-red-400 border border-red-100 px-2 py-3 rounded-md shadow-md text-sm",
+              success:
+                "text-green-400 bg-green-50 border border-green-100  w-full px-2 py-3 rounded-md shadow-md text-sm flex item-center gap-2",
+              warning: "text-yellow-400",
+              info: "bg-blue-400",
+            },
+          }}
+        />
       </body>
     </html>
   )

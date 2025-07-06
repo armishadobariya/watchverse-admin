@@ -1,6 +1,6 @@
 "use client"
 
-import { getProfile } from "@/lib/api/profile"
+import { getProfileHandler } from "@/lib/api/profile"
 import { useQuery } from "@tanstack/react-query"
 import { CircleUserRound } from "lucide-react"
 import { usePathname } from "next/navigation"
@@ -17,7 +17,7 @@ const Header = () => {
 
   const profile = useQuery({
     queryKey: ["profile"],
-    queryFn: getProfile,
+    queryFn: getProfileHandler,
   })
   return (
     <header className="!w-full shadow-sm">

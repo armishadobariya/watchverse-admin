@@ -20,37 +20,46 @@ import * as React from "react"
 import * as RPNInput from "react-phone-number-input"
 import flags from "react-phone-number-input/flags"
 
+import { Label } from "./label"
+
 type PhoneInputProps = Omit<
   React.ComponentProps<"input">,
   "onChange" | "value" | "ref"
 > &
   Omit<RPNInput.Props<typeof RPNInput.default>, "onChange"> & {
     onChange?: (value: RPNInput.Value) => void
+    error?: string
   }
 
 const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
   React.forwardRef<React.ElementRef<typeof RPNInput.default>, PhoneInputProps>(
-    ({ className, onChange, ...props }, ref) => {
+    ({ className, onChange, error, ...props }, ref) => {
       return (
-        <RPNInput.default
-          ref={ref}
-          className={cn("flex", className)}
-          flagComponent={FlagComponent}
-          countrySelectComponent={CountrySelect}
-          inputComponent={InputComponent}
-          smartCaret={false}
-          /**
-           * Handles the onChange event.
-           *
-           * react-phone-number-input might trigger the onChange event as undefined
-           * when a valid phone number is not entered. To prevent this,
-           * the value is coerced to an empty string.
-           *
-           * @param {E164Number | undefined} value - The entered value
-           */
-          onChange={(value) => onChange?.(value || ("" as RPNInput.Value))}
-          {...props}
-        />
+        <div className="mb-4">
+          <Label className="medium-md text-main mb-2">Mobile Number *</Label>
+          <RPNInput.default
+            ref={ref}
+            className={cn("flex", className)}
+            flagComponent={FlagComponent}
+            countrySelectComponent={CountrySelect}
+            inputComponent={InputComponent}
+            smartCaret={false}
+            /**
+             * Handles the onChange event.
+             *
+             * react-phone-number-input might trigger the onChange event as undefined
+             * when a valid phone number is not entered. To prevent this,
+             * the value is coerced to an empty string.
+             *
+             * @param {E164Number | undefined} value - The entered value
+             */
+            onChange={(value) => onChange?.(value || ("" as RPNInput.Value))}
+            {...props}
+          />
+          {error && (
+            <p className="b5-medium text-red mt-1 !mb-0 ml-[2px]">{error}</p>
+          )}
+        </div>
       )
     },
   )
@@ -89,7 +98,7 @@ const CountrySelect = ({
         <Button
           type="button"
           variant="outline"
-          className="flex h-11 gap-1 rounded-s-lg rounded-e-none border-r-0 px-3 focus:z-10"
+          className="!flex items-center h-11 gap-1 rounded-s-lg rounded-e-none border-r-0 px-3 focus:z-10"
           disabled={disabled}
         >
           <FlagComponent
@@ -162,7 +171,7 @@ const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
   const Flag = flags[country]
 
   return (
-    <span className="bg-foreground/20 flex h-4.5 w-6 overflow-hidden [&_svg]:!size-full">
+    <span className="bg-foreground/20 flex h-4.5 w-6 overflow-hidden [&_svg]:!size-full ">
       {Flag && <Flag title={countryName} />}
     </span>
   )

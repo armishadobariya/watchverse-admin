@@ -1,21 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { changePassword } from "@/lib/api/profile"
+import { changePasswordHandler } from "@/lib/api/profile"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import React from "react"
 import { useForm } from "react-hook-form"
-import { toast } from "sonner"
 import { z } from "zod"
 
 const formSchema = z.object({
@@ -28,17 +19,15 @@ const formSchema = z.object({
 })
 
 const ChangePassword = () => {
-  const { mutate } = useMutation({
-    mutationFn: changePassword,
-    onSuccess: (payload) => {
-      toast.success(payload?.message)
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
+  const { mutate, isPending } = useMutation({
+    mutationFn: changePasswordHandler,
   })
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       password: "",
@@ -51,51 +40,30 @@ const ChangePassword = () => {
   return (
     <div className="border-muted flex flex-col space-y-6 rounded-xl border p-4">
       <h2 className="text-xl font-semibold text-slate-900">Change Password</h2>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Current Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your current password"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="newPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>New Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter new password"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            type="submit"
-            className="ml-auto flex h-10 items-end justify-end text-lg"
-          >
-            Change
-          </Button>
-        </form>
-      </Form>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <Input
+          type="password"
+          label="Current Password *"
+          placeholder="Enter your current password"
+          {...register("password")}
+          error={errors?.password}
+        />
+        <Input
+          type="password"
+          label="New Password *"
+          placeholder="Enter new password"
+          {...register("newPassword")}
+          error={errors?.newPassword}
+        />
+        <Button
+          type="submit"
+          className="ml-auto flex h-10 items-end justify-end text-lg"
+          loader={isPending}
+          disabled={isPending}
+        >
+          Change
+        </Button>
+      </form>
     </div>
   )
 }

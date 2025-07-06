@@ -16,11 +16,11 @@ const refreshRequestQueue: {
 let isRefreshInProgress = false
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // Enable if using HTTP-only cookies
+  withCredentials: true,
 })
 
 // Request Interceptor
