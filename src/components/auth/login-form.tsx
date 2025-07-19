@@ -44,7 +44,9 @@ export function LoginForm() {
 
   return (
     <div className="space-y-10">
-      <h2 className="text-3xl font-bold text-slate-950 uppercase">Log In</h2>
+      <h2 className="text-3xl font-bold text-slate-950 uppercase dark:text-white/70">
+        Log In
+      </h2>
       <div className="flex flex-col gap-2">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <Input

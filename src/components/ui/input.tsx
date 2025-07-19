@@ -13,15 +13,15 @@ const inputStyles = tv({
     // base
     "text-sm relative block w-full appearance-none truncate rounded-md border px-3 py-[10px] shadow-xs transition outline-none",
     // border color
-    "border-gray-200",
+    "border-gray-200 dark:border-neutral-20",
     // text color
-    "text-main",
+    "text-main dark:text-white/70",
     // placeholder color
-    "placeholder-text-sub",
+    "placeholder-text-sub dark:placeholder:text-white/50",
     // background color
     "bg-bg-white-0",
     // disabled
-    "disabled:text-sub disabled:cursor-not-allowed disabled:border-gray-200 disabled:opacity-90",
+    "disabled:text-sub disabled:cursor-not-allowed disabled:border-gray-200 disabled:opacity-90 ",
     // file
     [
       "file:-my-1.5 file:-ml-2.5 file:h-[36px] file:cursor-pointer file:rounded-[12px] file:rounded-r-none file:border-0 file:px-3 file:py-[10px] file:outline-none focus:outline-none",
@@ -94,7 +94,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className={cn("relative w-full", className)}>
-        {label && <Label className="medium-md text-main mb-2">{label}</Label>}
+        {label && (
+          <Label className="medium-md text-main mb-2 dark:text-white/70">
+            {label}
+          </Label>
+        )}
         {hasPrefix && (
           <div
             className={cn("absolute top-1/2 left-3", "text-main-text", {

@@ -1,7 +1,6 @@
 "use client"
 
 import DashboardPageRoute from "@/app/(root)/dashboard/route.info"
-import ProfilePageRoute from "@/app/(root)/profile/route.info"
 import {
   Sidebar,
   SidebarContent,
@@ -16,7 +15,6 @@ import {
 import {
   BadgeIndianRupee,
   BaggageClaim,
-  CircleUserRound,
   Folders,
   LayoutDashboard,
   Shapes,
@@ -66,11 +64,6 @@ const items = [
     url: "#",
     icon: BadgeIndianRupee,
   },
-  {
-    title: "Profile",
-    url: ProfilePageRoute.navigate(),
-    icon: CircleUserRound,
-  },
 ]
 
 export function AppSidebar() {
@@ -79,7 +72,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <div className="flex items-center px-1 py-2 bg-accent rounded-lg shrink-0 ">
+          <div className="flex items-center px-1 py-2 bg-accent rounded-lg shrink-0 dark:bg-neutral-20">
             <Logo className="size-10 flex-shrink-0" />
             <SidebarGroupLabel>WatchVerse</SidebarGroupLabel>
           </div>

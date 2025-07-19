@@ -70,7 +70,7 @@ const AccountDetails = () => {
   }
 
   return (
-    <div className="border-muted flex w-full flex-col gap-5 rounded-xl border p-4">
+    <div className="border-muted flex w-full flex-col gap-5 rounded-xl border p-4 dark:border-neutral-20 dark:bg-neutral-light">
       <UserCircle2Icon className="mx-auto flex size-32 justify-center rounded-full bg-slate-200 text-slate-400" />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <Input
@@ -86,6 +86,7 @@ const AccountDetails = () => {
           placeholder="Enter Email Address"
           {...register("email")}
           error={errors?.email}
+          disabled={true}
         />
         <Controller
           name="phoneNo"

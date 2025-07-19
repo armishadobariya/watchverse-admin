@@ -1,4 +1,5 @@
 import LayoutWrapper from "@/components/layout/layout-wrapper"
+import { ThemeProvider } from "@/components/layout/theme-provider"
 import varela_Round from "@/fonts/varela-round"
 import type { Metadata } from "next"
 import { Toaster } from "sonner"
@@ -18,7 +19,9 @@ export default function DashboardLayout({
   return (
     <html lang="en">
       <body className={`${varela_Round.variable}, antialiased`}>
-        <LayoutWrapper>{children}</LayoutWrapper>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </ThemeProvider>
         <Toaster
           position="top-center"
           toastOptions={{

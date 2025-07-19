@@ -54,7 +54,9 @@ export function SignUpForm() {
 
   return (
     <div className="space-y-10">
-      <h2 className="text-3xl font-bold text-slate-950 uppercase">Sign up</h2>
+      <h2 className="text-3xl font-bold text-slate-950 uppercase dark:text-white/70">
+        Sign up
+      </h2>
 
       <div className="flex flex-col gap-2">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -89,7 +91,7 @@ export function SignUpForm() {
           </Button>
         </form>
         <div className="text-sm">
-          <span className="text-slate-950">Already have an account?</span>{" "}
+          <span>Already have an account?</span>{" "}
           <span className="text-sub">
             <Link href="/login">Log In</Link>
           </span>

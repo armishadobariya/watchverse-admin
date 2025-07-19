@@ -36,7 +36,9 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
     ({ className, onChange, error, ...props }, ref) => {
       return (
         <div className="mb-4">
-          <Label className="medium-md text-main mb-2">Mobile Number *</Label>
+          <Label className="medium-md text-main mb-2 dark:text-white/70">
+            Mobile Number *
+          </Label>
           <RPNInput.default
             ref={ref}
             className={cn("flex", className)}
@@ -71,6 +73,7 @@ const InputComponent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <Input
     className={cn("rounded-s-none rounded-e-lg", className)}
+    inputClassName={`!border-l-0 rounded-s-none rounded-e-lg  `}
     {...props}
     ref={ref}
   />
@@ -98,19 +101,21 @@ const CountrySelect = ({
         <Button
           type="button"
           variant="outline"
-          className="!flex items-center h-11 gap-1 rounded-s-lg rounded-e-none border-r-0 px-3 focus:z-10"
+          className="flex items-center gap-1 rounded-s-lg rounded-e-none border-r-0 px-3 focus:z-10 h-[42px]"
           disabled={disabled}
         >
-          <FlagComponent
-            country={selectedCountry}
-            countryName={selectedCountry}
-          />
-          <ChevronsUpDown
-            className={cn(
-              "-mr-2 size-4 opacity-50",
-              disabled ? "hidden" : "opacity-100",
-            )}
-          />
+          <div className="flex items-center gap-1">
+            <FlagComponent
+              country={selectedCountry}
+              countryName={selectedCountry}
+            />
+            <ChevronsUpDown
+              className={cn(
+                "-mr-2 size-4 opacity-50",
+                disabled ? "hidden" : "opacity-100",
+              )}
+            />
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">

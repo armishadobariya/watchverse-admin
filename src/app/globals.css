@@ -39,7 +39,7 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: #171c25;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -118,6 +118,10 @@
   --color-sub: #9f9fa9;
   --color-red: #fb2c36;
   --color-red-bg: #ff0e00;
+
+  --color-neutral: #171c25;
+  --color-neutral-light: #1a202c;
+  --color-neutral-20: #2d3748;
 }
 
 @layer base {
