@@ -1,32 +1,51 @@
-import { API_ENDPOINTS } from "@/utils/constants";
-import axiosInstance from "../axiosIntance";
-import { ChangePasswordPayload, EditProfilePayload } from "@/type/type";
+import { ChangePasswordPayload, EditProfilePayload } from "@/type/type"
+import { ApiEndPoint } from "@/utils/constants"
+import { toast } from "sonner"
 
-export const getProfile = async () => {
-    const response = await axiosInstance.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${API_ENDPOINTS.PROFILE}`
-    );
-    return response.data?.data;
-};
+import axiosInstance from "../axiosIntance"
+import { errorHandler } from "../utils"
 
-export const editProfile = async (payload: EditProfilePayload) => {
-    const response = await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${API_ENDPOINTS.EDIT_PROFILE}`,
-        payload
-    );
-    if (response.data !== 200) {
-        throw new Error(response.data.message);
+// get profile handler
+export const getProfileHandler = async () => {
+  try {
+    const response = await axiosInstance.get(ApiEndPoint.PROFILE)
+    return response.data?.data
+  } catch (error) {
+    errorHandler(error)
+  }
+}
+
+// edit profile handler
+export const editProfileHandler = async (payload: EditProfilePayload) => {
+  try {
+    const response = await axiosInstance.post(ApiEndPoint.EDIT_PROFILE, payload)
+    if (response.data?.statusCode !== 200) {
+      toast.error(response.data.message)
+      throw new Error(response.data.message)
+    } else {
+      toast.success(response.data.message)
     }
-    return response?.data;
-};
+    return response?.data
+  } catch (error) {
+    errorHandler(error)
+  }
+}
 
-export const changePassword = async (payload: ChangePasswordPayload) => {
+// change password handler
+export const changePasswordHandler = async (payload: ChangePasswordPayload) => {
+  try {
     const response = await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${API_ENDPOINTS.CHNAGE_PASSWORD}`,
-        payload
-    );
-    if (response.data !== 200) {
-        throw new Error(response.data.message);
+      ApiEndPoint.CHNAGE_PASSWORD,
+      payload,
+    )
+    if (response.data?.statusCode !== 200) {
+      toast.error(response.data.message)
+      throw new Error(response.data.message)
+    } else {
+      toast.success(response.data.message)
     }
-    return response?.data;
-};
+    return response?.data
+  } catch (error) {
+    errorHandler(error)
+  }
+}
