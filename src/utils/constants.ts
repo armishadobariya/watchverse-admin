@@ -6,6 +6,9 @@ export enum ApiEndPoint {
   CHNAGE_PASSWORD = "/change-password",
   FORGOT_PASSWORD = "/forgot-password",
   RESET_PASSWORD = "/reset-password",
+
+  // brand
+  BRAND = "/admin/brand",
 }
 
 export enum Paths {

@@ -1,5 +1,6 @@
 "use client"
 
+import BrandPageRoute from "@/app/(root)/brand/route.info"
 import DashboardPageRoute from "@/app/(root)/dashboard/route.info"
 import {
   Sidebar,
@@ -51,7 +52,7 @@ const items = [
   },
   {
     title: "Brand",
-    url: "#",
+    url: BrandPageRoute.navigate(),
     icon: Tag,
   },
   {

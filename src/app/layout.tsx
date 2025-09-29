@@ -2,6 +2,7 @@ import LayoutWrapper from "@/components/layout/layout-wrapper"
 import { ThemeProvider } from "@/components/layout/theme-provider"
 import varela_Round from "@/fonts/varela-round"
 import type { Metadata } from "next"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 import { Toaster } from "sonner"
 
 import "./globals.css"
@@ -20,7 +21,9 @@ export default function DashboardLayout({
     <html lang="en">
       <body className={`${varela_Round.variable}, antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <LayoutWrapper>{children}</LayoutWrapper>
+          <NuqsAdapter>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </NuqsAdapter>
         </ThemeProvider>
         <Toaster
           position="top-center"

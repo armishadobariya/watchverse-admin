@@ -17,18 +17,21 @@ let isRefreshInProgress = false
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
   withCredentials: true,
 })
 
 // Request Interceptor
 axiosInstance.interceptors.request.use((config) => {
   const token = getCookie("AUTH_TOKEN")
-
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
+  }
+  if (!config.headers["Content-Type"]) {
+    if (config.data instanceof FormData) {
+      config.headers["Content-Type"] = "multipart/form-data"
+    } else if (typeof config.data === "object") {
+      config.headers["Content-Type"] = "application/json"
+    }
   }
   return config
 })
