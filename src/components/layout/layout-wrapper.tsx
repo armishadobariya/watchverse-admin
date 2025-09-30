@@ -32,7 +32,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
         <SidebarTrigger />
         <Provider>
           <Header />
-          <div className="p-5">{children}</div>
+          <div className="p-6">{children}</div>
         </Provider>
       </main>
     </SidebarProvider>

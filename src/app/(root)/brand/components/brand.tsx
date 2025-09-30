@@ -1,34 +1,56 @@
 "use client"
 
 import { DataTable } from "@/components/common/data-table"
+import PerPageRecord from "@/components/common/per-page-record"
+import SearchBar from "@/components/common/search-bar"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import useDebounce from "@/hooks/useDebounce"
 import { BrandData, getBrandsHandler } from "@/lib/api/brand"
 import { formateDate } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, Table } from "@tanstack/react-table"
 import Image from "next/image"
-import React from "react"
+import { parseAsString, useQueryState } from "nuqs"
+import React, { useState } from "react"
 
 import AddBrandModal from "./add-brand-modal"
 
 const Brand = () => {
+  const [search] = useQueryState("search", parseAsString.withDefault(""))
+  const [tableInstance, setTableInstance] = useState<Table<BrandData>>()
+
+  // Debounce the search value
+  const debouncedSearch = useDebounce({ value: search, delay: 500 })
+
+  const params = new URLSearchParams()
+  if (search) {
+    params.set("search", debouncedSearch)
+  }
+
+  // Use the debounced value in your query
   const data = useQuery({
-    queryKey: ["brands"],
-    queryFn: () => getBrandsHandler(),
+    queryKey: ["brands", debouncedSearch],
+    queryFn: () => getBrandsHandler(params.toString()),
   })
 
   return (
-    <div>
-      <AddBrandModal>
-        <Button variant={"outline"}>Add brand</Button>
-      </AddBrandModal>
+    <div className="space-y-6">
+      <div className="flex justify-end w-full">
+        <AddBrandModal>
+          <Button variant={"outline"}>Add brand</Button>
+        </AddBrandModal>
+      </div>
 
-      <div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-6">
+          <SearchBar placeholder="Search brand" />
+          {tableInstance && <PerPageRecord table={tableInstance} />}
+        </div>
         <DataTable
           columns={brandColumns}
           data={data?.data || []}
-          searchPlaceholder="search brands..."
+          onTableReady={setTableInstance}
         />
       </div>
     </div>
@@ -76,9 +98,7 @@ export const brandColumns: ColumnDef<BrandData>[] = [
             className="size-8 object-cover rounded"
           />
         </div>
-        <div className="font-semibold text-base text-slate-800">
-          {row.original.name}
-        </div>
+        {row.original.name}
       </div>
     ),
   },
@@ -88,13 +108,9 @@ export const brandColumns: ColumnDef<BrandData>[] = [
     cell: ({ row }) => {
       const date = row.getValue("createdAt")
       if (typeof date === "string") {
-        return (
-          <div className="text-slate-800 text-sm font-semibold">
-            {formateDate(date)}
-          </div>
-        )
+        return <>{formateDate(date)}</>
       }
-      return <div className="text-slate-800 text-sm">{String(date)}</div>
+      return <>{String(date)}</>
     },
   },
 

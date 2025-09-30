@@ -1,14 +1,14 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import {
   Table,
   TableBody,
@@ -21,6 +21,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
+  Table as TanStackTable,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -28,15 +29,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { parseAsIndex, parseAsInteger, useQueryStates } from "nuqs"
-import React from "react"
+import React, { useEffect } from "react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   searchPlaceholder?: string
   onSearchChange?: (search: string) => void
+  onTableReady?: (table: TanStackTable<TData>) => void
 }
 
 const paginationParsers = {
@@ -67,8 +68,7 @@ function getPageRange(currentPage: number, totalPages: number) {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  // searchPlaceholder = "Search...",
-  // onSearchChange,
+  onTableReady,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -82,15 +82,10 @@ export function DataTable<TData, TValue>({
     { urlKeys: paginationUrlKeys },
   )
 
-  // Handle search from URL
-  // const [urlSearch, setUrlSearch] = useQueryState(
-  //   "search",
-  //   parseAsString.withDefault(""),
-  // )
-
   const table = useReactTable({
     data,
     columns,
+
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
@@ -123,55 +118,17 @@ export function DataTable<TData, TValue>({
     },
   })
 
-  // const handleSearchChange = (value: string) => {
-  //   setUrlSearch(value || null)
-  //   if (onSearchChange) {
-  //     onSearchChange(value)
-  //   }
-  //   // Reset to first page when searching
-  //   setPaginationParams({ pageIndex: 0 })
-  // }
+  // Pass table instance to parent component using useEffect
+  useEffect(() => {
+    if (onTableReady) {
+      onTableReady(table)
+    }
+  }, [table, onTableReady])
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        {/* <div className="flex items-center py-4 relative">
-          <Search className="absolute left-2 text-gray-400 size-5" />
-
-          <Input
-            type="text"
-            placeholder={searchPlaceholder}
-            value={urlSearch}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="max-w-sm pl-8.5 h-10 border-[1.5px] rounded-full border-gray-200 placeholder:text-gray-400 w-2xs "
-          />
-        </div> */}
-        <div className="flex items-center gap-2">
-          <span className="text-gray-800">Items Per Page</span>
-          <Select
-            value={table.getState().pagination.pageSize.toString()}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value))
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="10" />
-            </SelectTrigger>
-            <SelectContent>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem
-                  key={pageSize}
-                  value={pageSize.toString()}
-                  className="cursor-pointer"
-                >
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      <div className="rounded-md border mt-4">
+      <div className="flex items-center justify-between"></div>
+      <div className="rounded-md border dark:border-neutral-20 overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -217,9 +174,9 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="relative flex items-center w-full py-4">
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <span className="text-sm text-slate-700 flex items-center justify-center gap-1">
+      <div className="grid grid-cols-2 items-center py-4">
+        <div className="flex justify-end">
+          <span className="text-sm text-slate-700 dark:text-white/70 flex items-center justify-center gap-1">
             Go to page:
             <Input
               type="number"
@@ -235,51 +192,65 @@ export function DataTable<TData, TValue>({
             />
           </span>
         </div>
-        <div className="ml-auto justify-end flex items-center space-x-5">
-          <span className="text-sm text-slate-700 flex items-center gap-1">
-            <div>Page</div>
-            <strong className="font-medium">
+        <div className="justify-end flex items-center gap-6 w-full">
+          <span className="text-sm text-slate-700 dark:text-white/70 flex items-center gap-1">
+            <div className="flex-shrink-0">Page</div>
+            <strong className="font-medium flex items-center">
               {table.getState().pagination.pageIndex + 1} of{" "}
               {table.getPageCount().toLocaleString()}
             </strong>
           </span>
-          <div className="flex items-center space-x-1.5">
-            <Button
-              variant="outline"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="shadow-none px-2 py-1"
-            >
-              <ChevronLeft />
-            </Button>
-            {/* Page numbers */}
-            <span className="flex items-center gap-2">
+
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    table.previousPage()
+                  }}
+                  className="shadow-none py-1"
+                  aria-disabled={!table.getCanPreviousPage()}
+                />
+              </PaginationItem>
+
               {getPageRange(
                 table.getState().pagination.pageIndex,
                 table.getPageCount(),
               ).map((page) => (
-                <span
-                  key={page}
-                  onClick={() => table.setPageIndex(page)}
-                  className={`px-3 py-1 border rounded-md cursor-pointer ${
-                    page === table.getState().pagination.pageIndex
-                      ? "border-bronze font-medium text-bronze"
-                      : "border-gray-300"
-                  }`}
-                >
-                  {page + 1}
-                </span>
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    href="#"
+                    isActive={page === table.getState().pagination.pageIndex}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      table.setPageIndex(page)
+                    }}
+                    className={`px-3 py-1 cursor-pointer ${
+                      page === table.getState().pagination.pageIndex
+                        ? "border-teal bg-teal-20 dark:border-white dark:bg-neutral-light font-medium text-bronze"
+                        : "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
+                    }`}
+                  >
+                    {page + 1}
+                  </PaginationLink>
+                </PaginationItem>
               ))}
-            </span>
-            <Button
-              variant="outline"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="shadow-none px-2 py-1"
-            >
-              <ChevronRight />
-            </Button>
-          </div>
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    table.nextPage()
+                  }}
+                  className="shadow-none  py-1"
+                  aria-disabled={!table.getCanNextPage()}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ interface ImageUploaderProps {
 export default function ImageUploader({ value, onChange }: ImageUploaderProps) {
   const [preview, setPreview] = useState<string | null>(value || null)
   const [fileName, setFileName] = useState<string | null>(null)
+  console.log("fileName: ", fileName)
 
   // console.log("preview: ", preview);
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -20,7 +21,6 @@ export default function ImageUploader({ value, onChange }: ImageUploaderProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    console.log("file: ", file?.name)
 
     // Create preview URL
     const fileUrl = URL.createObjectURL(file)

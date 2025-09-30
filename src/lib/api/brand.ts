@@ -33,10 +33,10 @@ export const addBrandHandler = async (formData: FormData) => {
 }
 
 // get brand handler
-export const getBrandsHandler = async () => {
+export const getBrandsHandler = async (params: string) => {
   try {
     const response = await axiosInstance.get<ApiResponse<BrandData[]>>(
-      ApiEndPoint.BRAND,
+      `${ApiEndPoint.BRAND}?${params}`,
     )
     return response.data?.data
   } catch (error) {
