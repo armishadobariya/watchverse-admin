@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { addBrandHandler } from "@/lib/api/brand"
+import { addBrandHandler, updateBrandHandler } from "@/lib/api/brand"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
@@ -69,25 +69,21 @@ const AddBrandModal = ({
   const addBrandMutation = useMutation({
     mutationFn: (data: FormData) => addBrandHandler(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["brands"] })
+      queryClient.invalidateQueries({ queryKey: ["brands"], exact: false })
       setOpen(false)
       reset()
     },
   })
 
   // update brand handler
-  //   const updateBrandMutation = useMutation({
-  //     mutationFn: (data: { id: string; payload: FormData }) =>
-  //       updateBrand(data.id, data.payload),
-  //     onSuccess: (payload) => {
-  //       queryClient.invalidateQueries({ queryKey: ["brands"] });
-  //       toast.success(payload?.message);
-  //       // onSuccess?.();
-  //     },
-  //     onError: (error) => {
-  //       toast.error(error?.message);
-  //     },
-  //   });
+  const updateBrandMutation = useMutation({
+    mutationFn: (data: { id: string; payload: FormData }) =>
+      updateBrandHandler(data?.id, data?.payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["brands"], exact: false })
+      setOpen(false)
+    },
+  })
 
   // form submit handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -106,7 +102,14 @@ const AddBrandModal = ({
     } else if (initialData?.icon && !isEditing) {
       formData.append("icon", initialData.icon)
     }
-    addBrandMutation.mutate(formData)
+    if (isEditing && initialData?._id) {
+      updateBrandMutation.mutate({
+        id: initialData._id,
+        payload: formData,
+      })
+    } else {
+      addBrandMutation.mutate(formData)
+    }
   }
 
   // Handle file uploads from ImageUploader
@@ -131,8 +134,12 @@ const AddBrandModal = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-2xl ">
         <DialogHeader>
-          <DialogTitle>Add Brand</DialogTitle>
-          <DialogDescription>Add brand image, logo and name</DialogDescription>
+          <DialogTitle>{isEditing ? "Edit brand" : "Add brand"}</DialogTitle>
+          <DialogDescription>
+            {isEditing
+              ? "Edit a brand name, image and logo"
+              : "Add a new brand name, image and logo"}
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-10">
           <div className="flex flex-col gap-2">
@@ -177,31 +184,19 @@ const AddBrandModal = ({
               </div>
 
               <div className="flex justify-end">
-                {/* <Button
-                type="submit"
-                disabled={
-                  isEditing
-                    ? updateBrandMutation.isPending
-                    : addBrandMutation.isPending
-                }
-                className="w-full h-11 text-base text-bronze uppercase font-semibold"
-              >
-                {(
-                  isEditing
-                    ? updateBrandMutation?.isPending
-                    : addBrandMutation?.isPending
-                )
-                  ? "Saving..."
-                  : isEditing
-                  ? "Update Barnd"
-                  : "Add Brand"}
-              </Button> */}
                 <Button
                   type="submit"
-                  size={"lg"}
-                  loader={addBrandMutation.isPending}
+                  disabled={
+                    isEditing
+                      ? updateBrandMutation.isPending
+                      : addBrandMutation.isPending
+                  }
+                  className=" h-11 text-base uppercase"
+                  loader={
+                    updateBrandMutation.isPending || addBrandMutation.isPending
+                  }
                 >
-                  Add
+                  {isEditing ? "Save changes" : "Add"}
                 </Button>
               </div>
             </form>

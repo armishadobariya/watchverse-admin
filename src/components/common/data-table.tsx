@@ -38,6 +38,7 @@ interface DataTableProps<TData, TValue> {
   searchPlaceholder?: string
   onSearchChange?: (search: string) => void
   onTableReady?: (table: TanStackTable<TData>) => void
+  onRowClick?: (row: TData) => void
 }
 
 const paginationParsers = {
@@ -69,6 +70,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   onTableReady,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -150,6 +152,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => onRowClick?.(row?.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

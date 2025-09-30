@@ -17,12 +17,30 @@ export interface BrandData {
   __v: number
 }
 
-// API function to create a new category
+// to create a new brand handler
 export const addBrandHandler = async (formData: FormData) => {
   try {
     const response = await axiosInstance.post(`${ApiEndPoint.BRAND}`, formData)
     if (response.data.statusCode !== 200) {
-      throw new Error(response.data.message)
+      toast.error(response.data.message)
+    } else {
+      toast.success(response.data.message)
+    }
+    return response.data
+  } catch (error) {
+    errorHandler(error)
+  }
+}
+
+// update brand handler
+export const updateBrandHandler = async (id: string, formData: FormData) => {
+  try {
+    const response = await axiosInstance.put(
+      `${ApiEndPoint.BRAND}/${id}`,
+      formData,
+    )
+    if (response.data.statusCode !== 200) {
+      toast.error(response.data.message)
     } else {
       toast.success(response.data.message)
     }
@@ -39,6 +57,27 @@ export const getBrandsHandler = async (params: string) => {
       `${ApiEndPoint.BRAND}?${params}`,
     )
     return response.data?.data
+  } catch (error) {
+    errorHandler(error)
+  }
+}
+
+// delete brand handler
+export const deleteBrandHandler = async (ids: string | string[]) => {
+  try {
+    const idsArray = Array.isArray(ids) ? ids : [ids]
+    const queryString = idsArray
+      ?.map((id, index) => `id[${index}]=${id}`)
+      ?.join("&")
+    const response = await axiosInstance.delete(
+      `${ApiEndPoint.BRAND}?${queryString}`,
+    )
+    if (response.data.statusCode !== 200) {
+      toast.error(response.data.message)
+    } else {
+      toast.success(response.data.message)
+    }
+    return response.data
   } catch (error) {
     errorHandler(error)
   }
