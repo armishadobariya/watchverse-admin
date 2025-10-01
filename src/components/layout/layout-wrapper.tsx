@@ -1,6 +1,10 @@
 "use client"
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar"
 import Provider from "@/lib/provider"
 import { usePathname } from "next/navigation"
 import React from "react"
@@ -32,7 +36,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
         <SidebarTrigger />
         <Provider>
           <Header />
-          <div className="p-6">{children}</div>
+          <MainLayout>{children}</MainLayout>
         </Provider>
       </main>
     </SidebarProvider>
@@ -40,3 +44,15 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 }
 
 export default LayoutWrapper
+
+export const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  const { open } = useSidebar()
+
+  return (
+    <section
+      className={`${open ? "w-full md:w-[calc(100vw-260px)]" : "md:w-[calc(100vw-90px)]"} h-[calc(100vh-86px)] overflow-x-hidden overflow-y-auto p-6`}
+    >
+      {children}
+    </section>
+  )
+}

@@ -6,7 +6,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { OctagonAlert } from "lucide-react"
-import React from "react"
+import React, { useState } from "react"
 
 import { Button } from "../ui/button"
 
@@ -14,16 +14,35 @@ interface DeleteItemModalProps {
   children: React.ReactNode
   text: string
   loading?: boolean
-  handleDelete: () => void
+  handleDelete: () => Promise<void> | void
+  onModalClose?: () => void
 }
 const DeleteItemModal = ({
   children,
   text,
   handleDelete,
   loading,
+  onModalClose,
 }: DeleteItemModalProps) => {
+  const [open, setOpen] = useState(false)
+
+  // dialog change handler
+  const handleDialogChange = (isOpen: boolean) => {
+    setOpen(isOpen)
+    if (!isOpen) {
+      onModalClose?.()
+    }
+  }
+
+  // handle confirm delete
+  const handleConfirmDelete = async () => {
+    await handleDelete()
+    setOpen(false)
+    onModalClose?.()
+  }
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent>
         <div className="mx-auto flex flex-col items-center justify-center gap-3.5">
@@ -52,7 +71,7 @@ const DeleteItemModal = ({
             type="submit"
             variant={"destructive"}
             className="w-full"
-            onClick={handleDelete}
+            onClick={handleConfirmDelete}
             size={"lg"}
             loader={loading}
             disabled={loading}

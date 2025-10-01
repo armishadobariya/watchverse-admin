@@ -24,7 +24,7 @@ const PerPageRecord = ({ table }: PerPageRecordProps) => {
   return (
     <div className="flex items-center gap-2">
       <span className="text-gray-800 dark:text-white/70 text-sm">
-        Items Per Page
+        Rows Per Page
       </span>
       <Select value={pageSize.toString()} onValueChange={handleValueChange}>
         <SelectTrigger>
@@ -35,7 +35,7 @@ const PerPageRecord = ({ table }: PerPageRecordProps) => {
             <SelectItem
               key={pageSize}
               value={pageSize.toString()}
-              className="cursor-pointer"
+              className="cursor-pointer h-10"
             >
               {pageSize}
             </SelectItem>

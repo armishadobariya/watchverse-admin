@@ -23,14 +23,14 @@ const Header = () => {
     queryFn: getProfileHandler,
   })
   return (
-    <header className="!w-full shadow-sm dark:bg-neutral-light sticky top-0 z-50 bg-white">
+    <header className="!w-full shadow-sm dark:bg-neutral-light sticky top-0 z-20 ">
       <div className="flex w-full items-center justify-between px-5 py-6">
         {pathname === "/" ? (
-          <h1 className="ml-3 text-lg font-semibold text-slate-900">
+          <h1 className="ml-5 text-lg font-semibold text-slate-900">
             Dashboard
           </h1>
         ) : (
-          <h1 className="ml-3 text-lg font-semibold text-slate-900 dark:text-white/70">
+          <h1 className="ml-5 text-lg font-semibold text-slate-900 dark:text-white/70">
             {fromatePath()}
           </h1>
         )}

@@ -1,17 +1,21 @@
 import { FolderDown } from "lucide-react"
 import React from "react"
 
+import DeleteItemModal from "./delete-item-modal"
+
 interface SectionHeaderProps {
   count: number
   name: string
   selectedCount?: number
-  onDeleteSelected?: () => void
+  loading?: boolean
+  onDeleteSelected: () => void
 }
 
 const SectionHeader = ({
   count,
   name,
   selectedCount = 0,
+  loading,
   onDeleteSelected,
 }: SectionHeaderProps) => {
   console.log("selectedCount: ", selectedCount)
@@ -28,12 +32,15 @@ const SectionHeader = ({
         </p>
 
         {selectedCount > 0 && (
-          <div
-            onClick={onDeleteSelected}
-            className="flex items-center gap-2.5 bg-red-50 px-4 py-2 w-fit text-red-500 font-medium border border-red-200 dark:bg-neutral-20 dark:text-red-400 rounded-md text-sm cursor-pointer hover:bg-red-100 dark:hover:bg-neutral-30 transition-colors"
+          <DeleteItemModal
+            text={`Are you sure you want to delete ${selectedCount} brand${selectedCount > 1 ? "s" : ""}?`}
+            handleDelete={() => onDeleteSelected()}
+            loading={loading}
           >
-            <span>Delete ({selectedCount})</span>
-          </div>
+            <div className="flex items-center gap-2.5 bg-red-50 px-4 py-2 w-fit text-red-500 font-medium border border-red-200 dark:bg-neutral-20 dark:text-red-400 rounded-md text-sm cursor-pointer hover:bg-red-100 dark:hover:bg-neutral-30 transition-colors">
+              <span>Delete ({selectedCount})</span>
+            </div>
+          </DeleteItemModal>
         )}
       </div>
     </div>

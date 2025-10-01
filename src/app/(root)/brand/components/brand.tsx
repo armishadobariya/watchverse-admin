@@ -15,7 +15,7 @@ import {
 } from "@/lib/api/brand"
 import { formateDate } from "@/lib/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ColumnDef, Row, Table } from "@tanstack/react-table"
+import { ColumnDef, Row, RowSelectionState, Table } from "@tanstack/react-table"
 import { SquarePen, Trash2 } from "lucide-react"
 import Image from "next/image"
 import { parseAsString, useQueryState } from "nuqs"
@@ -26,79 +26,79 @@ import AddBrandModal from "./add-brand-modal"
 const Brand = () => {
   const [search] = useQueryState("search", parseAsString.withDefault(""))
   const [tableInstance, setTableInstance] = useState<Table<BrandData>>()
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const queryClient = useQueryClient()
 
   const debouncedSearch = useDebounce({ value: search, delay: 500 })
 
   const params = new URLSearchParams()
-  if (search) {
-    params.set("search", debouncedSearch)
+  if (search) params.set("search", debouncedSearch)
+
+  const selectedIds = Object.keys(rowSelection)
+
+  // multiple delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string | string[]) => deleteBrandHandler(id),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["brands"], exact: false }),
+    onSettled: () => {
+      tableInstance?.resetRowSelection()
+      setRowSelection({})
+    },
+  })
+
+  // handle bulk delete
+  const handleBulkDelete = async () => {
+    if (selectedIds?.length) {
+      await deleteMutation.mutateAsync(selectedIds)
+    }
   }
 
-  const handleBulkDelete = () => {
-    // Add your bulk delete logic here
-  }
+  const selectedCount = Object.keys(rowSelection).length
 
-  const selectedCount = tableInstance?.getSelectedRowModel().rows.length || 0
-
-  const data = useQuery({
+  // fetch brands
+  const { data } = useQuery({
     queryKey: ["brands", debouncedSearch],
     queryFn: () => getBrandsHandler(params.toString()),
   })
+  // const selectedIds = data
+  //   ?.filter((item) => item._id in rowSelection)
+  //   ?.map((item) => item._id)
 
-  const handleRowClick = (row: BrandData) => {
-    if (!tableInstance) return
-
-    const rowModel = tableInstance
-      .getRowModel()
-      .rows.find((r) => r.original._id === row._id)
-    if (rowModel) {
-      rowModel.toggleSelected()
-      // Force re-render by updating state
-      setTableInstance({ ...tableInstance })
-    }
-  }
+  // const selectId = data?.map((item) => item._id)
+  console.log("selectedIds: ", selectedIds)
 
   return (
     <div className="space-y-6">
       <div className="flex justify-end w-full">
         <AddBrandModal>
-          <Button variant={"outline"}>Add brand</Button>
+          <Button variant="outline">Add brand</Button>
         </AddBrandModal>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-6">
+          {/* search, filter, delete actions */}
           <div className="flex items-center gap-6">
             <SearchBar placeholder="Search brand" />
             <SectionHeader
               name="Brands"
-              count={data?.data?.length || 0}
+              count={data?.length || 0}
               selectedCount={selectedCount}
               onDeleteSelected={handleBulkDelete}
+              loading={deleteMutation?.isPending}
             />
-            {selectedCount > 0 && (
-              <DeleteItemModal
-                text="Are you sure you want to delete these brands?"
-                handleDelete={handleBulkDelete}
-              >
-                <Button
-                  variant={"destructive"}
-                  disabled={selectedCount === 0}
-                  onClick={handleBulkDelete}
-                >
-                  Delete ({selectedCount})
-                </Button>
-              </DeleteItemModal>
-            )}
           </div>
-
           {tableInstance && <PerPageRecord table={tableInstance} />}
         </div>
+
+        {/* brand listing */}
         <DataTable
           columns={BrandColumns()}
-          data={data?.data || []}
+          data={data || []}
           onTableReady={setTableInstance}
-          onRowClick={handleRowClick}
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
         />
       </div>
     </div>
@@ -107,18 +107,16 @@ const Brand = () => {
 
 export default Brand
 
+// brand columns
 export const BrandColumns = (): ColumnDef<BrandData>[] => {
   const ActionCell = ({ row }: { row: Row<BrandData> }) => {
     const queryClient = useQueryClient()
 
     const deleteBrandMutation = useMutation({
       mutationFn: (id: string) => deleteBrandHandler(id),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["brands"], exact: false })
-      },
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: ["brands"], exact: false }),
     })
-
-    const handleDelete = () => {}
 
     return (
       <div className="flex items-center justify-end gap-4">
@@ -128,7 +126,7 @@ export const BrandColumns = (): ColumnDef<BrandData>[] => {
 
         <DeleteItemModal
           text="Are you sure you want to delete this brand?"
-          handleDelete={handleDelete}
+          handleDelete={() => deleteBrandMutation.mutateAsync(row.original._id)}
           loading={deleteBrandMutation.isPending}
         >
           <Trash2 className="size-5 text-red-700 cursor-pointer" />
@@ -162,32 +160,26 @@ export const BrandColumns = (): ColumnDef<BrandData>[] => {
     },
     {
       id: "brand",
-      accessorFn: (row) => `${row.image}-${row.name}`,
-      header: () => <span>Brand</span>,
+      header: "Brand",
       cell: ({ row }) => (
         <div className="flex items-center gap-4">
-          <div className="flex items-center">
-            <Image
-              src={row.original.image}
-              alt={`${row.original.name} image`}
-              width={48}
-              height={48}
-              className="size-8 object-cover rounded"
-            />
-          </div>
+          <Image
+            src={row.original.image}
+            alt={`${row.original.name} image`}
+            width={48}
+            height={48}
+            className="size-8 object-cover rounded"
+          />
           {row.original.name}
         </div>
       ),
     },
     {
       accessorKey: "createdAt",
-      header: () => <span>Created At</span>,
+      header: "Created At",
       cell: ({ row }) => {
         const date = row.getValue("createdAt")
-        if (typeof date === "string") {
-          return <>{formateDate(date)}</>
-        }
-        return <>{String(date)}</>
+        return typeof date === "string" ? formateDate(date) : String(date)
       },
     },
     {

@@ -266,8 +266,8 @@ function SidebarTrigger({
       variant="ghost"
       size="icon"
       className={cn(
-        "absolute top-7.5 size-7 text-slate-900 border-none pl-1.5 dark:text-white/70 hover:bg-neutral-20 dark:hover:bg-neutral-20",
         className,
+        "[&_svg:not([class*='size-'])]:size-4 absolute z-50 border-none pl-3 mt-[25px] pr-1.5",
       )}
       onClick={(event) => {
         onClick?.(event)
@@ -276,6 +276,7 @@ function SidebarTrigger({
       {...props}
     >
       <PanelLeftIcon />
+
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

@@ -20,6 +20,8 @@ import {
 import {
   ColumnDef,
   ColumnFiltersState,
+  OnChangeFn,
+  RowSelectionState,
   SortingState,
   Table as TanStackTable,
   flexRender,
@@ -39,6 +41,8 @@ interface DataTableProps<TData, TValue> {
   onSearchChange?: (search: string) => void
   onTableReady?: (table: TanStackTable<TData>) => void
   onRowClick?: (row: TData) => void
+  rowSelection?: Record<string, boolean>
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
 }
 
 const paginationParsers = {
@@ -71,12 +75,13 @@ export function DataTable<TData, TValue>({
   data,
   onTableReady,
   onRowClick,
+  rowSelection = {},
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   )
-  const [rowSelection, setRowSelection] = React.useState({})
 
   // Use NuQS for pagination state
   const [paginationParams, setPaginationParams] = useQueryStates(
@@ -103,7 +108,10 @@ export function DataTable<TData, TValue>({
       },
     },
     getPaginationRowModel: getPaginationRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: onRowSelectionChange,
+    enableRowSelection: true,
+    getRowId: (row: any) => row._id,
+
     onPaginationChange: (updater) => {
       const newPagination =
         typeof updater === "function"
@@ -146,13 +154,16 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="z-0">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => onRowClick?.(row?.original)}
+                  onClick={(e) => {
+                    onRowClick?.(row?.original)
+                    e.preventDefault()
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -197,11 +208,21 @@ export function DataTable<TData, TValue>({
         </div>
         <div className="justify-end flex items-center gap-6 w-full">
           <span className="text-sm text-slate-700 dark:text-white/70 flex items-center gap-1">
-            <div className="flex-shrink-0">Page</div>
-            <strong className="font-medium flex items-center">
-              {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount().toLocaleString()}
-            </strong>
+            {(() => {
+              const pageIndex = table.getState().pagination.pageIndex
+              const pageSize = table.getState().pagination.pageSize
+              const totalRecords = table.getFilteredRowModel().rows.length // or from API if server-side
+              const start = pageIndex * pageSize + 1
+              const end = Math.min((pageIndex + 1) * pageSize, totalRecords)
+
+              return (
+                <>
+                  <span>
+                    {start}-{end} of {totalRecords}
+                  </span>
+                </>
+              )
+            })()}
           </span>
 
           <Pagination>
