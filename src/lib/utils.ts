@@ -16,3 +16,10 @@ export const errorHandler = (error: unknown) => {
   // Handle other error types if needed
   throw error
 }
+
+// date formatter
+export const formateDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const shortMonth = date.toLocaleString("en-US", { month: "short" })
+  return `${shortMonth} ${date.getUTCDate()}, ${date.getUTCFullYear()}`
+}

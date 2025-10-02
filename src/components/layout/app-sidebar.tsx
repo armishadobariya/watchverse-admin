@@ -1,5 +1,6 @@
 "use client"
 
+import BrandPageRoute from "@/app/(root)/brand/route.info"
 import DashboardPageRoute from "@/app/(root)/dashboard/route.info"
 import {
   Sidebar,
@@ -11,6 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import {
   BadgeIndianRupee,
@@ -26,6 +28,7 @@ import { usePathname } from "next/navigation"
 import Logo from "static/icons/logo.svg"
 
 import { LogOut } from "../auth/log-out"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 // Menu items.
 const items = [
@@ -51,7 +54,7 @@ const items = [
   },
   {
     title: "Brand",
-    url: "#",
+    url: BrandPageRoute.navigate(),
     icon: Tag,
   },
   {
@@ -68,6 +71,8 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const { open } = useSidebar()
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -86,8 +91,21 @@ export function AppSidebar() {
                     isActive={pathname === item?.url}
                   >
                     <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+                      {!open ? (
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <item.icon />
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>{item.title}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
