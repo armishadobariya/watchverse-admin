@@ -13,11 +13,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import useDebounce from "@/hooks/useDebounce"
+import { BrandData } from "@/lib/api/brand"
 import {
-  BrandData,
-  deleteBrandHandler,
-  getBrandsHandler,
-} from "@/lib/api/brand"
+  CategoryData,
+  deleteCategoryHandler,
+  getCategoryHandler,
+} from "@/lib/api/category"
 import { formateDate } from "@/lib/utils"
 import queryKeyFactory from "@/utils/queryKeyFactory"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -27,15 +28,15 @@ import Image from "next/image"
 import { parseAsString, useQueryState } from "nuqs"
 import React, { useState } from "react"
 
-import AddBrandModal from "./add-brand-modal"
+import AddCategoryModal from "./add-category-modal"
 
-const Brand = () => {
+const Category = () => {
   const [search] = useQueryState("search", parseAsString.withDefault(""))
   const [tableInstance, setTableInstance] = useState<Table<BrandData>>()
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const queryClient = useQueryClient()
 
   const debouncedSearch = useDebounce({ value: search, delay: 500 })
+  const queryClient = useQueryClient()
 
   const params = new URLSearchParams()
   if (search) params.set("search", debouncedSearch)
@@ -44,9 +45,11 @@ const Brand = () => {
 
   // multiple delete mutation
   const deleteMutation = useMutation({
-    mutationFn: (id: string | string[]) => deleteBrandHandler(id),
+    mutationFn: (id: string | string[]) => deleteCategoryHandler(id),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeyFactory?.brandList() }),
+      queryClient.invalidateQueries({
+        queryKey: queryKeyFactory?.categoryList(),
+      }),
     onSettled: () => {
       tableInstance?.resetRowSelection()
       setRowSelection({})
@@ -62,18 +65,17 @@ const Brand = () => {
 
   const selectedCount = Object.keys(rowSelection).length
 
-  // fetch brands
+  // fetch category
   const { data, isPending } = useQuery({
-    queryKey: queryKeyFactory?.brandList(debouncedSearch),
-    queryFn: () => getBrandsHandler(params.toString()),
+    queryKey: queryKeyFactory?.categoryList(debouncedSearch),
+    queryFn: () => getCategoryHandler(params.toString()),
   })
-
   return (
     <div className="space-y-6">
       <div className="flex justify-end w-full">
-        <AddBrandModal>
-          <Button variant="outline">Add brand</Button>
-        </AddBrandModal>
+        <AddCategoryModal>
+          <Button variant="outline">Add Category</Button>
+        </AddCategoryModal>
       </div>
 
       <div className="space-y-4">
@@ -82,7 +84,7 @@ const Brand = () => {
           <div className="flex items-center gap-6">
             <SearchBar placeholder="Search brand" />
             <SectionHeader
-              name="Brands"
+              name="Categories"
               count={data?.length || 0}
               selectedCount={selectedCount}
               onDeleteSelected={handleBulkDelete}
@@ -92,9 +94,8 @@ const Brand = () => {
           {tableInstance && <PerPageRecord table={tableInstance} />}
         </div>
 
-        {/* brand listing */}
         <DataTable
-          columns={BrandColumns()}
+          columns={CategoryColumns()}
           data={data || []}
           onTableReady={setTableInstance}
           rowSelection={rowSelection}
@@ -106,42 +107,42 @@ const Brand = () => {
   )
 }
 
-export default Brand
+export default Category
 
-// brand columns
-export const BrandColumns = (): ColumnDef<BrandData>[] => {
-  const ActionCell = ({ row }: { row: Row<BrandData> }) => {
+// category columns
+export const CategoryColumns = (): ColumnDef<CategoryData>[] => {
+  const ActionCell = ({ row }: { row: Row<CategoryData> }) => {
     const queryClient = useQueryClient()
 
-    const deleteBrandMutation = useMutation({
-      mutationFn: (id: string) => deleteBrandHandler(id),
+    const deleteCategoryMutation = useMutation({
+      mutationFn: (id: string) => deleteCategoryHandler(id),
       onSuccess: () =>
         queryClient.invalidateQueries({
-          queryKey: queryKeyFactory?.brandList(),
+          queryKey: queryKeyFactory?.categoryList(),
         }),
     })
 
     return (
       <div className="flex items-center justify-end gap-4">
         <Tooltip>
-          <TooltipTrigger>
-            {" "}
-            <AddBrandModal initialData={row.original} isEditing>
+          <TooltipTrigger asChild>
+            <AddCategoryModal initialData={row.original} isEditing>
               <SquarePen className="size-5 cursor-pointer" />
-            </AddBrandModal>
+            </AddCategoryModal>
           </TooltipTrigger>
           <TooltipContent>
             <p>Edit</p>
           </TooltipContent>
         </Tooltip>
+
         <Tooltip>
           <TooltipTrigger>
             <DeleteItemModal
               text="Are you sure you want to delete this brand?"
               handleDelete={() =>
-                deleteBrandMutation.mutateAsync(row.original._id)
+                deleteCategoryMutation.mutateAsync(row.original._id)
               }
-              loading={deleteBrandMutation.isPending}
+              loading={deleteCategoryMutation.isPending}
             >
               <Trash2 className="size-5 text-red-700 cursor-pointer" />
             </DeleteItemModal>
@@ -178,8 +179,8 @@ export const BrandColumns = (): ColumnDef<BrandData>[] => {
       enableHiding: false,
     },
     {
-      id: "brand",
-      header: "Brand",
+      id: "category",
+      header: "Category",
       cell: ({ row }) => (
         <div className="flex items-center gap-4">
           <Image

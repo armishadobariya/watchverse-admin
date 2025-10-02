@@ -1,6 +1,7 @@
 "use client"
 
 import BrandPageRoute from "@/app/(root)/brand/route.info"
+import CategoryPageRoute from "@/app/(root)/category/route.info"
 import DashboardPageRoute from "@/app/(root)/dashboard/route.info"
 import {
   Sidebar,
@@ -49,7 +50,7 @@ const items = [
   },
   {
     title: "Category",
-    url: "#",
+    url: CategoryPageRoute.navigate(),
     icon: Shapes,
   },
   {

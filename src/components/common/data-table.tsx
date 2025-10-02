@@ -186,10 +186,7 @@ export function DataTable<TData extends WithId, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={(e) => {
-                    onRowClick?.(row?.original)
-                    e.preventDefault()
-                  }}
+                  onClick={() => onRowClick?.(row?.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
