@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { addBrandHandler, updateBrandHandler } from "@/lib/api/brand"
+import { addCategoryHandler, updateCategoryHandler } from "@/lib/api/category"
 import queryKeyFactory from "@/utils/queryKeyFactory"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -39,7 +39,7 @@ export interface AddEntityFormProps {
   children: React.ReactNode
 }
 
-const AddBrandModal = ({
+const AddCategoryModal = ({
   initialData,
   isEditing = false,
   children,
@@ -66,22 +66,26 @@ const AddBrandModal = ({
 
   const queryClient = useQueryClient()
 
-  // add brand handler
-  const addBrandMutation = useMutation({
-    mutationFn: (data: FormData) => addBrandHandler(data),
+  // add category handler
+  const addCategoryMutation = useMutation({
+    mutationFn: (data: FormData) => addCategoryHandler(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeyFactory?.brandList() })
+      queryClient.invalidateQueries({
+        queryKey: queryKeyFactory?.categoryList(),
+      })
       setOpen(false)
       reset()
     },
   })
 
-  // update brand handler
-  const updateBrandMutation = useMutation({
+  // update category handler
+  const updateCategoryMutation = useMutation({
     mutationFn: (data: { id: string; payload: FormData }) =>
-      updateBrandHandler(data?.id, data?.payload),
+      updateCategoryHandler(data?.id, data?.payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeyFactory?.brandList() })
+      queryClient.invalidateQueries({
+        queryKey: queryKeyFactory?.categoryList(),
+      })
       setOpen(false)
     },
   })
@@ -104,12 +108,12 @@ const AddBrandModal = ({
       formData.append("icon", initialData.icon)
     }
     if (isEditing && initialData?._id) {
-      updateBrandMutation.mutate({
-        id: initialData._id,
+      updateCategoryMutation.mutate({
+        id: initialData?._id,
         payload: formData,
       })
     } else {
-      addBrandMutation.mutate(formData)
+      addCategoryMutation.mutate(formData)
     }
   }
 
@@ -135,19 +139,21 @@ const AddBrandModal = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-2xl ">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit brand" : "Add brand"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Edit category" : "Add category"}
+          </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Edit a brand name, image and logo"
-              : "Add a new brand name, image and logo"}
+              ? "Edit a category name, image and logo"
+              : "Add a new category name, image and logo"}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-10">
+        <div className="space-y-10 mt-4">
           <div className="flex flex-col gap-2">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-2 gap-4 w-full">
                 <div className="flex items-start gap-4 w-full">
-                  <Label>Brand Image:</Label>
+                  <Label>Category Image:</Label>
                   <Controller
                     name="image"
                     control={control}
@@ -160,7 +166,7 @@ const AddBrandModal = ({
                   />
                 </div>
                 <div className="flex items-start gap-4 w-full">
-                  <Label>Brand Logo:</Label>
+                  <Label>Category Logo:</Label>
                   <Controller
                     name="icon"
                     control={control}
@@ -177,8 +183,8 @@ const AddBrandModal = ({
               <div>
                 <Input
                   type="text"
-                  label="Brand Name *"
-                  placeholder="Enter Brand Name"
+                  label="Category Name *"
+                  placeholder="Enter Category Name"
                   {...register("name")}
                   error={errors.name}
                 />
@@ -189,12 +195,14 @@ const AddBrandModal = ({
                   type="submit"
                   disabled={
                     isEditing
-                      ? updateBrandMutation.isPending
-                      : addBrandMutation.isPending
+                      ? updateCategoryMutation.isPending
+                      : addCategoryMutation.isPending
                   }
                   className=" h-11 text-base uppercase"
                   loader={
-                    updateBrandMutation.isPending || addBrandMutation.isPending
+                    isEditing
+                      ? updateCategoryMutation.isPending
+                      : addCategoryMutation.isPending
                   }
                 >
                   {isEditing ? "Save changes" : "Add"}
@@ -208,4 +216,4 @@ const AddBrandModal = ({
   )
 }
 
-export default AddBrandModal
+export default AddCategoryModal

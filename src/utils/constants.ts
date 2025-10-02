@@ -7,6 +7,9 @@ export enum ApiEndPoint {
   FORGOT_PASSWORD = "/forgot-password",
   RESET_PASSWORD = "/reset-password",
 
+  // category
+  CATEGORY = "/admin/category",
+
   // brand
   BRAND = "/admin/brand",
 }

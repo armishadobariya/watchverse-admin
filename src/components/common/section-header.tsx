@@ -33,7 +33,7 @@ const SectionHeader = ({
 
         {selectedCount > 0 && (
           <DeleteItemModal
-            text={`Are you sure you want to delete ${selectedCount} brand${selectedCount > 1 ? "s" : ""}?`}
+            text={`Are you sure you want to delete ${selectedCount} ${name}?`}
             handleDelete={() => onDeleteSelected()}
             loading={loading}
           >
