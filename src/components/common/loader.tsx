@@ -22,7 +22,7 @@ const Loader = ({ className }: { className?: string }) => {
 export default Loader
 export const Loading = () => {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 bg-white/70 z-50">
+    <div className="fixed inset-0 flex  items-center justify-center gap-4 bg-white/70 z-50">
       <div className="loader">
         <div className="bar1"></div>
         <div className="bar2"></div>

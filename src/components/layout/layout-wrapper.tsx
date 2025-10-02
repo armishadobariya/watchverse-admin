@@ -50,7 +50,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <section
-      className={`${open ? "w-full md:w-[calc(100vw-260px)]" : "md:w-[calc(100vw-90px)]"} h-[calc(100vh-86px)] overflow-x-hidden overflow-y-auto p-6`}
+      className={`${open ? "w-full md:w-[calc(100vw-260px)]" : "md:w-[calc(100vw-65px)]"} h-[calc(100vh-86px)] overflow-x-hidden overflow-y-auto p-6`}
     >
       {children}
     </section>

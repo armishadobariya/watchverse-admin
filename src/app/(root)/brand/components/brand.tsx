@@ -7,6 +7,11 @@ import SearchBar from "@/components/common/search-bar"
 import SectionHeader from "@/components/common/section-header"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import useDebounce from "@/hooks/useDebounce"
 import {
   BrandData,
@@ -57,16 +62,10 @@ const Brand = () => {
   const selectedCount = Object.keys(rowSelection).length
 
   // fetch brands
-  const { data } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["brands", debouncedSearch],
     queryFn: () => getBrandsHandler(params.toString()),
   })
-  // const selectedIds = data
-  //   ?.filter((item) => item._id in rowSelection)
-  //   ?.map((item) => item._id)
-
-  // const selectId = data?.map((item) => item._id)
-  console.log("selectedIds: ", selectedIds)
 
   return (
     <div className="space-y-6">
@@ -99,6 +98,7 @@ const Brand = () => {
           onTableReady={setTableInstance}
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
+          isLoading={isPending}
         />
       </div>
     </div>
@@ -120,17 +120,33 @@ export const BrandColumns = (): ColumnDef<BrandData>[] => {
 
     return (
       <div className="flex items-center justify-end gap-4">
-        <AddBrandModal initialData={row.original} isEditing>
-          <SquarePen className="size-5 cursor-pointer" />
-        </AddBrandModal>
-
-        <DeleteItemModal
-          text="Are you sure you want to delete this brand?"
-          handleDelete={() => deleteBrandMutation.mutateAsync(row.original._id)}
-          loading={deleteBrandMutation.isPending}
-        >
-          <Trash2 className="size-5 text-red-700 cursor-pointer" />
-        </DeleteItemModal>
+        <Tooltip>
+          <TooltipTrigger>
+            {" "}
+            <AddBrandModal initialData={row.original} isEditing>
+              <SquarePen className="size-5 cursor-pointer" />
+            </AddBrandModal>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Edit</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger>
+            <DeleteItemModal
+              text="Are you sure you want to delete this brand?"
+              handleDelete={() =>
+                deleteBrandMutation.mutateAsync(row.original._id)
+              }
+              loading={deleteBrandMutation.isPending}
+            >
+              <Trash2 className="size-5 text-red-700 cursor-pointer" />
+            </DeleteItemModal>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Delete</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
     )
   }

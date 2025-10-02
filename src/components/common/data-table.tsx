@@ -34,7 +34,14 @@ import {
 import { parseAsIndex, parseAsInteger, useQueryStates } from "nuqs"
 import React, { useEffect } from "react"
 
-interface DataTableProps<TData, TValue> {
+import NoDataFound from "./no-data-found"
+import { TableSkeleton } from "./table-skeleton"
+
+interface WithId {
+  _id: string
+}
+
+interface DataTableProps<TData extends WithId, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   searchPlaceholder?: string
@@ -43,6 +50,8 @@ interface DataTableProps<TData, TValue> {
   onRowClick?: (row: TData) => void
   rowSelection?: Record<string, boolean>
   onRowSelectionChange?: OnChangeFn<RowSelectionState>
+  getRowId?: (row: TData) => string
+  isLoading?: boolean
 }
 
 const paginationParsers = {
@@ -56,27 +65,45 @@ const paginationUrlKeys = {
 }
 
 function getPageRange(currentPage: number, totalPages: number) {
-  let start = Math.max(0, currentPage - 1)
-  const end = Math.min(totalPages, start + 3)
+  const delta = 1
+  const range: (number | string)[] = []
+  const rangeWithDots: (number | string)[] = []
+  let l: number | undefined
 
-  // Adjust start if we're at the end
-  if (end - start < 3 && start > 0) {
-    start = Math.max(0, end - 3)
+  for (let i = 0; i < totalPages; i++) {
+    if (
+      i === 0 ||
+      i === totalPages - 1 ||
+      (i >= currentPage - delta && i <= currentPage + delta)
+    ) {
+      range.push(i)
+    }
   }
 
-  const range = []
-  for (let i = start; i < end; i++) {
-    range.push(i)
+  for (const i of range) {
+    if (l !== undefined) {
+      if (Number(i) - l === 2) {
+        rangeWithDots.push(l + 1)
+      } else if (Number(i) - l > 2) {
+        rangeWithDots.push("...")
+      }
+    }
+    rangeWithDots.push(i)
+    l = Number(i)
   }
-  return range
+
+  return rangeWithDots
 }
-export function DataTable<TData, TValue>({
+
+export function DataTable<TData extends WithId, TValue>({
   columns,
   data,
   onTableReady,
   onRowClick,
   rowSelection = {},
   onRowSelectionChange,
+  getRowId,
+  isLoading,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -92,7 +119,6 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
@@ -110,8 +136,8 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: onRowSelectionChange,
     enableRowSelection: true,
-    getRowId: (row: any) => row._id,
-
+    // Type-safe row ID extractor
+    getRowId: getRowId || ((row: TData) => row._id),
     onPaginationChange: (updater) => {
       const newPagination =
         typeof updater === "function"
@@ -138,8 +164,8 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex items-center justify-between"></div>
-      <div className="rounded-md border dark:border-neutral-20 overflow-hidden">
-        <Table>
+      <div className="rounded-md border dark:border-neutral-20 ">
+        <Table divClassName="max-h-[calc(100vh-320px)]">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -176,29 +202,47 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
+              <>
+                {isLoading ? (
+                  <TableSkeleton
+                    columns={table.getVisibleFlatColumns().length}
+                  />
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={table.getVisibleFlatColumns().length}
+                      className="h-24 text-center"
+                    >
+                      <div className="flex justify-center">
+                        <NoDataFound desc="No Brands Found" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
             )}
           </TableBody>
         </Table>
       </div>
+
+      {/* pagination */}
+
       <div className="grid grid-cols-2 items-center py-4">
         <div className="flex justify-end">
           <span className="text-sm text-slate-700 dark:text-white/70 flex items-center justify-center gap-1">
             Go to page:
             <Input
               type="number"
-              min="1"
+              min={1}
               max={table.getPageCount()}
               defaultValue={table.getState().pagination.pageIndex + 1}
               onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0
+                let page = e.target.value ? Number(e.target.value) - 1 : 0
+
+                if (page < 0) page = 0
+                if (page >= table.getPageCount())
+                  page = table.getPageCount() - 1
+
                 table.setPageIndex(page)
               }}
               className="rounded w-16"
@@ -211,7 +255,7 @@ export function DataTable<TData, TValue>({
             {(() => {
               const pageIndex = table.getState().pagination.pageIndex
               const pageSize = table.getState().pagination.pageSize
-              const totalRecords = table.getFilteredRowModel().rows.length // or from API if server-side
+              const totalRecords = table.getFilteredRowModel().rows.length
               const start = pageIndex * pageSize + 1
               const end = Math.min((pageIndex + 1) * pageSize, totalRecords)
 
@@ -232,33 +276,36 @@ export function DataTable<TData, TValue>({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault()
-                    table.previousPage()
+                    if (table?.getCanPreviousPage()) table.previousPage()
                   }}
                   className="shadow-none py-1"
                   aria-disabled={!table.getCanPreviousPage()}
                 />
               </PaginationItem>
-
               {getPageRange(
-                table.getState().pagination.pageIndex,
-                table.getPageCount(),
-              ).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    href="#"
-                    isActive={page === table.getState().pagination.pageIndex}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      table.setPageIndex(page)
-                    }}
-                    className={`px-3 py-1 cursor-pointer ${
-                      page === table.getState().pagination.pageIndex
-                        ? "border-teal bg-teal-20 dark:border-white dark:bg-neutral-light font-medium text-bronze"
-                        : "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
-                    }`}
-                  >
-                    {page + 1}
-                  </PaginationLink>
+                table?.getState()?.pagination?.pageIndex,
+                table?.getPageCount(),
+              )?.map((page, idx) => (
+                <PaginationItem key={idx}>
+                  {page === "..." ? (
+                    <span className="px-3 py-1">...</span>
+                  ) : (
+                    <PaginationLink
+                      href="#"
+                      isActive={page === table.getState().pagination.pageIndex}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        table.setPageIndex(Number(page))
+                      }}
+                      className={`px-3 py-1 cursor-pointer ${
+                        page === table.getState().pagination.pageIndex
+                          ? "border-teal bg-teal-20 dark:border-white dark:bg-neutral-light font-medium text-bronze"
+                          : "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
+                      }`}
+                    >
+                      {Number(page) + 1}
+                    </PaginationLink>
+                  )}
                 </PaginationItem>
               ))}
 
@@ -267,9 +314,9 @@ export function DataTable<TData, TValue>({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault()
-                    table.nextPage()
+                    if (table?.getCanNextPage()) table?.nextPage()
                   }}
-                  className="shadow-none  py-1"
+                  className="shadow-none py-1"
                   aria-disabled={!table.getCanNextPage()}
                 />
               </PaginationItem>

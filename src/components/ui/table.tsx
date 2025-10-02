@@ -3,11 +3,16 @@
 import { cn } from "@/lib/utils"
 import * as React from "react"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+interface TableProps extends React.ComponentProps<"table"> {
+  divClassName?: string
+  onScroll?: (e: React.UIEvent<HTMLDivElement>) => void
+}
+
+function Table({ divClassName, className, ...props }: TableProps) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      className={`b4-regular relative w-full overflow-auto rounded-xl !font-normal ${divClassName}`}
     >
       <table
         data-slot="table"
@@ -23,7 +28,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
     <thead
       data-slot="table-header"
       className={cn(
-        "[&_tr]:border-b bg-muted dark:bg-neutral-20 text-slate-900 dark:text-white/70 dark:[&_tr]:border-b-neutral-20",
+        "[&_tr]:border-b bg-muted dark:bg-neutral-20 text-slate-900 dark:text-white/70 dark:[&_tr]:border-b-neutral-20 sticky top-0",
         className,
       )}
       {...props}
@@ -72,7 +77,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "text-foreground h-10 px-4 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] ",
+        "text-foreground h-10 px-4 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] stickey top-0 ",
         className,
       )}
       {...props}
