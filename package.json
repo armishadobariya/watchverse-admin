@@ -42,7 +42,8 @@
     "tailwind-variants": "^1.0.0",
     "tempeh": "^5.0.6",
     "tw-animate-css": "^1.2.5",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

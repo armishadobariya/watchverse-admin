@@ -4,7 +4,7 @@ const generateQueryKey =
     [key, ...args] as const
 
 const queryKeyFactory = {
-  brandList: generateQueryKey("brand"),
+  brandList: (search?: string) => ["brands", search || ""],
   categoryList: generateQueryKey("category"),
 }
 

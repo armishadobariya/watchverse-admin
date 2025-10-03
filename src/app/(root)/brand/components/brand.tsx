@@ -47,6 +47,7 @@ const Brand = () => {
     mutationFn: (id: string | string[]) => deleteBrandHandler(id),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: queryKeyFactory?.brandList() }),
+
     onSettled: () => {
       tableInstance?.resetRowSelection()
       setRowSelection({})
@@ -66,6 +67,10 @@ const Brand = () => {
   const { data, isPending } = useQuery({
     queryKey: queryKeyFactory?.brandList(debouncedSearch),
     queryFn: () => getBrandsHandler(params.toString()),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   })
 
   return (

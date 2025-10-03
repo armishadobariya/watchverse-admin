@@ -14,18 +14,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { addBrandHandler, updateBrandHandler } from "@/lib/api/brand"
 import queryKeyFactory from "@/utils/queryKeyFactory"
+import { categoryBrandSchema } from "@/utils/validators"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
-
-// Define your schema for form validation
-const formSchema = z.object({
-  name: z.string().min(1, { message: "This field has to be filled." }),
-  image: z.string().min(1, { message: "This field has to be filled." }),
-  icon: z.string().min(1, { message: "This field has to be filled." }),
-})
 
 export interface AddEntityFormProps {
   initialData?: {
@@ -48,6 +42,7 @@ const AddBrandModal = ({
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [iconFile, setIconFile] = useState<File | null>(null)
 
+  const queryClient = useQueryClient()
   const {
     control,
     register,
@@ -55,16 +50,14 @@ const AddBrandModal = ({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  } = useForm<z.infer<typeof categoryBrandSchema>>({
+    resolver: zodResolver(categoryBrandSchema),
     defaultValues: {
       image: initialData?.image || "",
       icon: initialData?.icon || "",
       name: initialData?.name || "",
     },
   })
-
-  const queryClient = useQueryClient()
 
   // add brand handler
   const addBrandMutation = useMutation({
@@ -87,7 +80,7 @@ const AddBrandModal = ({
   })
 
   // form submit handler
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof categoryBrandSchema>) {
     const formData = new FormData()
     formData.append("name", values.name)
 

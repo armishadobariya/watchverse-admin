@@ -18,8 +18,6 @@ const SectionHeader = ({
   loading,
   onDeleteSelected,
 }: SectionHeaderProps) => {
-  console.log("selectedCount: ", selectedCount)
-
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">

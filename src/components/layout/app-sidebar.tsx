@@ -3,6 +3,7 @@
 import BrandPageRoute from "@/app/(root)/brand/route.info"
 import CategoryPageRoute from "@/app/(root)/category/route.info"
 import DashboardPageRoute from "@/app/(root)/dashboard/route.info"
+import ProductPageRoute from "@/app/(root)/product/route.info"
 import {
   Sidebar,
   SidebarContent,
@@ -40,7 +41,7 @@ const items = [
   },
   {
     title: "Product",
-    url: "#",
+    url: ProductPageRoute.navigate(),
     icon: BaggageClaim,
   },
   {
