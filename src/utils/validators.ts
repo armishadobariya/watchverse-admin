@@ -13,7 +13,9 @@ export const productSchema = z.object({
 
   description: z.string().min(1, { message: "Description is required." }),
 
-  image: z.string().min(1, { message: "Product image is required." }),
+  image: z
+    .array(z.string())
+    .min(1, { message: "At least one image must be uploaded." }),
 
   thumbnail: z.string().min(1, { message: "Thumbnail is required." }),
 
@@ -40,10 +42,7 @@ export const productSchema = z.object({
     .min(1, { message: "stock is required." })
     .int({ message: "stock must be in a number." }),
 
-  warranty: z
-    .number()
-    .min(1, { message: "warranty is required." })
-    .int({ message: "warranty must be in a number." }),
+  warranty: z.string().min(1, { message: "warranty is required." }),
 })
 
 export type ProductFormData = z.infer<typeof productSchema>

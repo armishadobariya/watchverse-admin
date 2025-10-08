@@ -12,6 +12,9 @@ export enum ApiEndPoint {
 
   // brand
   BRAND = "/admin/brand",
+
+  // product
+  PRODUCT = "/admin/product",
 }
 
 export enum Paths {

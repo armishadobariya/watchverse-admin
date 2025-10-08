@@ -15,14 +15,19 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { getBrandsHandler } from "@/lib/api/brand"
 import { getCategoryHandler } from "@/lib/api/category"
+import { addProductHandler } from "@/lib/api/product"
 import queryKeyFactory from "@/utils/queryKeyFactory"
 import { productSchema } from "@/utils/validators"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 export const AddProductForm = () => {
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
+
   const queryClient = useQueryClient()
 
   const {
@@ -30,14 +35,14 @@ export const AddProductForm = () => {
     register,
     handleSubmit,
     setValue,
-
+    reset,
     formState: { errors },
   } = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
       description: "",
-      image: "",
+      image: [],
       thumbnail: "",
       productModel: "",
       category: [],
@@ -45,13 +50,9 @@ export const AddProductForm = () => {
       price: 0,
       dummyPrice: 0,
       stock: 0,
-      warranty: 0,
+      warranty: "",
     },
   })
-
-  const handleImageUpload = (file: File) => {
-    console.log("file: ", file)
-  }
 
   const cachedData = queryClient.getQueryData(queryKeyFactory.brandList(""))
 
@@ -82,11 +83,64 @@ export const AddProductForm = () => {
     label: category.name,
   }))
 
+  // add product handler
+  const addProductMutation = useMutation({
+    mutationFn: (data: FormData) => addProductHandler(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyFactory?.productList(),
+      })
+      reset()
+      setImageFiles([])
+      setThumbnailFile(null)
+    },
+  })
+
+  // Handle file uploads from ImageUploader
+  const handleImageUpload = (files: File[]) => {
+    setImageFiles(files)
+    // Set preview URLs for form validation
+    const imageUrls = files?.map((file) => URL?.createObjectURL(file))
+    setValue("image", imageUrls)
+  }
+
+  const handleThumbnailUpload = (file: File) => {
+    setThumbnailFile(file)
+    // Set preview URL for form validation
+    setValue("thumbnail", URL?.createObjectURL(file))
+  }
+
   // form submit handler
   function onSubmit(values: z.infer<typeof productSchema>) {
-    console.log(values)
-    console.log("form submitted")
+    const formData = new FormData()
+
+    formData.append("name", values.name.trim())
+    formData.append("description", values.description.trim())
+    formData.append("productModel", values.productModel.trim())
+    formData.append("brand", values.brand)
+    formData.append("price", String(values.price))
+    formData.append("dummyPrice", String(values.dummyPrice))
+    formData.append("stock", String(values.stock))
+    formData.append("warranty", values.warranty)
+
+    //  Append categories with indexed keys like category[0], category[1]
+    values.category.forEach((catId, index) => {
+      formData.append(`category[${index}]`, catId)
+    })
+
+    //  Append product images (multiple)
+    imageFiles.forEach((file) => {
+      formData.append("image", file)
+    })
+
+    //  Append single thumbnail
+    if (thumbnailFile) {
+      formData.append("thumbnail", thumbnailFile)
+    }
+
+    addProductMutation.mutate(formData)
   }
+
   return (
     <div className=" max-w-4xl mx-auto flex justify-center items-center">
       <div className="w-full space-y-10">
@@ -99,20 +153,28 @@ export const AddProductForm = () => {
             {...register("name")}
             error={errors.name}
           />
+
           <div className="space-y-2">
             <Label className="b4-medium text-main">Description *</Label>
             <div>
-              <Textarea
-                className={`${errors.description ? "border-2 border-red" : ""}`}
-                placeholder="Enter Product Description"
-                value={""}
-                onChange={(e) => setValue("description", e.target.value)}
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <Textarea
+                    className={`${errors.description ? "border-2 border-red" : ""}`}
+                    placeholder="Enter Product Description"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
               />
               <span className="text-sm text-red mt-1 ml-[2px]">
                 {errors.description?.message}
               </span>
             </div>
           </div>
+
           <div className="space-y-3 w-full">
             <Label>Product Images *</Label>
             <div>
@@ -121,8 +183,8 @@ export const AddProductForm = () => {
                 control={control}
                 render={({ field }) => (
                   <ImageUploader
-                    value={field.value}
-                    onChange={(files) => handleImageUpload(files)}
+                    value={field.value?.[0]}
+                    onChange={(files: File[]) => handleImageUpload(files)}
                     multiSelect={true}
                   />
                 )}
@@ -132,6 +194,7 @@ export const AddProductForm = () => {
               </span>
             </div>
           </div>
+
           <div className="space-y-3 w-full">
             <Label>Thumbnail *</Label>
             <div>
@@ -141,7 +204,7 @@ export const AddProductForm = () => {
                 render={({ field }) => (
                   <ImageUploader
                     value={field.value}
-                    onChange={(file) => handleImageUpload(file)}
+                    onChange={(file: File) => handleThumbnailUpload(file)}
                   />
                 )}
               />
@@ -163,14 +226,23 @@ export const AddProductForm = () => {
             <div className="space-y-2">
               <Label className="b4-medium text-main-text">Category *</Label>
               <div>
-                <MultiSelect
-                  options={categories || []}
-                  onValueChange={(value) => setValue("category", value)}
-                  placeholder="Select categories"
-                  variant="inverted"
-                  maxCount={3}
-                  className={`${errors.category ? "border-2 border-red" : "normal-case"}`}
-                  modalPopover
+                <Controller
+                  name="category"
+                  control={control}
+                  render={({ field }) => (
+                    <MultiSelect
+                      options={categories || []}
+                      onValueChange={(value) => {
+                        field.onChange(value)
+                      }}
+                      defaultValue={field.value}
+                      placeholder="Select categories"
+                      variant="inverted"
+                      maxCount={3}
+                      className={`${errors.category ? "border-2 border-red" : "normal-case"}`}
+                      modalPopover
+                    />
+                  )}
                 />
                 <span className="text-sm text-red mt-1 ml-[2px]">
                   {errors?.category?.message}
@@ -180,26 +252,33 @@ export const AddProductForm = () => {
 
             <div className="space-y-2">
               <Label className="b4-medium text-main">Brand *</Label>
-              <Select>
-                <SelectTrigger
-                  className={`w-full ${errors.brand ? "border-2 border-red-500" : ""}, h-12`}
-                >
-                  <SelectValue placeholder="Select a brand" />
-                </SelectTrigger>
-                <SelectContent>
-                  {brands?.map((brand) => (
-                    <SelectItem key={brand?.id} value={brand?.id}>
-                      {brand?.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="brand"
+                control={control}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger
+                      className={`w-full ${errors.brand ? "border-2 border-red-500" : ""} h-12`}
+                    >
+                      <SelectValue placeholder="Select a brand" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {brands?.map((brand) => (
+                        <SelectItem key={brand?.id} value={brand?.id}>
+                          {brand?.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors?.brand?.message && (
                 <span className="text-sm text-red-500 mt-1 ml-[2px]">
                   {errors.brand.message}
                 </span>
               )}
             </div>
+
             <Input
               label="Price *"
               placeholder="Enter Product Price"
@@ -224,13 +303,18 @@ export const AddProductForm = () => {
             <Input
               label="Warranty (In months) *"
               placeholder="Enter Product warranty"
-              {...register("warranty", { valueAsNumber: true })}
+              {...register("warranty")}
               error={errors.warranty}
             />
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit" size={"lg"}>
+            <Button
+              type="submit"
+              size={"lg"}
+              loader={addProductMutation?.isPending}
+              disabled={addProductMutation?.isPending}
+            >
               Add
             </Button>
           </div>

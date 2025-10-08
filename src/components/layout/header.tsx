@@ -23,7 +23,7 @@ const Header = () => {
     queryFn: getProfileHandler,
   })
   return (
-    <header className="!w-full shadow-sm dark:bg-neutral-light sticky top-0 z-20 ">
+    <header className="shadow-sm dark:bg-neutral-light sticky top-0 z-20 bg-white h-[84px]">
       <div className="flex w-full items-center justify-between px-5 py-6">
         {pathname === "/" ? (
           <h1 className="ml-5 text-lg font-semibold text-slate-900">

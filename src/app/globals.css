@@ -313,3 +313,16 @@
     animation-delay: -0.1s;
   }
 }
+
+/* ============================= Scrollbar styles ===================== */
+::-webkit-scrollbar-track {
+  @apply cursor-pointer rounded-[10px] bg-white;
+}
+
+::-webkit-scrollbar {
+  @apply bg-accent h-2 w-2;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply cursor-pointer rounded-[10px] bg-[#e2e8f0];
+}
