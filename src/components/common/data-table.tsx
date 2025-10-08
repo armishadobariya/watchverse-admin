@@ -21,6 +21,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   OnChangeFn,
+  RowData,
   RowSelectionState,
   SortingState,
   Table as TanStackTable,
@@ -37,10 +38,17 @@ import React, { useEffect } from "react"
 import NoDataFound from "./no-data-found"
 import { TableSkeleton } from "./table-skeleton"
 
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    className?: string
+    sortable?: boolean
+    filterFn?: (row: TData, columnId: string, filterValue: TValue) => boolean
+  }
+}
+
 interface WithId {
   _id: string
 }
-
 interface DataTableProps<TData extends WithId, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -170,7 +178,12 @@ export function DataTable<TData extends WithId, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className={`${
+                      header.column.columnDef.meta?.className ?? ""
+                    } `}
+                  >
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),
@@ -189,7 +202,10 @@ export function DataTable<TData extends WithId, TValue>({
                   onClick={() => onRowClick?.(row?.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={`${cell.column.columnDef.meta?.className ?? ""}`}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

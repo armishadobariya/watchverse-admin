@@ -33,8 +33,8 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider>
       <AppSidebar />
       <main className="w-full">
-          <Header />
-          <MainLayout>{children}</MainLayout>
+        <Header />
+        <MainLayout>{children}</MainLayout>
         <SidebarTrigger />
       </main>
     </SidebarProvider>

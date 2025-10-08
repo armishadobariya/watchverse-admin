@@ -23,3 +23,9 @@ export const formateDate = (dateString: string) => {
   const shortMonth = date.toLocaleString("en-US", { month: "short" })
   return `${shortMonth} ${date.getUTCDate()}, ${date.getUTCFullYear()}`
 }
+
+// Convert to Capitalize
+
+export const convertToCapitalize = (str: string) => {
+  return str?.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())
+}

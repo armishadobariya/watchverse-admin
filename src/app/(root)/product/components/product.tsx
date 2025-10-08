@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import React from "react"
 
 import AddProductPageRoute from "../add-product/route.info"
+import ProductList from "./product-list"
 
 const Product = () => {
   const router = useRouter()
@@ -18,6 +19,7 @@ const Product = () => {
           Add Product
         </Button>
       </div>
+      <ProductList />
     </div>
   )
 }

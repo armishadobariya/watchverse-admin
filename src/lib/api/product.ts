@@ -1,3 +1,4 @@
+import { ApiResponse } from "@/type/type"
 import { ApiEndPoint } from "@/utils/constants"
 import { toast } from "sonner"
 
@@ -29,6 +30,14 @@ export interface ProductData {
   totalReviews: number
 }
 
+export interface ProductParams {
+  search?: string
+  startPrice?: number
+  endPrice?: number
+  startStockRange?: number
+  endStockRange?: number
+}
+
 // to create a new product handler
 export const addProductHandler = async (formData: FormData) => {
   try {
@@ -49,5 +58,21 @@ export const addProductHandler = async (formData: FormData) => {
     return response.data
   } catch (error) {
     errorHandler(error)
+  }
+}
+
+// get product handler with optional filters
+export const getProductsHandler = async (params?: ProductParams) => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<ProductData[]>>(
+      ApiEndPoint?.PRODUCT,
+      {
+        params: params,
+      },
+    )
+    return response.data?.data
+  } catch (error) {
+    errorHandler(error)
+    throw error
   }
 }
